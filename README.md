@@ -6,6 +6,15 @@ ETrade support for the Trading Tool Kit.
 
 Most of these classes implement an interface that the TTK supports via duck typing. If the interface is followed, then this stuff Just Works.
 
+# Structure
+
+    accounts ->
+              |
+              - account --               -  EquityPosition
+                         |- balances     |- OptionPosition
+                         |- positions ---|- SpreadPosition
+                         |- orders       -  FuturesPosition
+
 # Plans
 
 1. Make it work
