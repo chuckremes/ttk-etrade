@@ -9,7 +9,7 @@ class TTK::ETrade::Session::Result
   attr_reader :code, :body
 
   def initialize(response)
-    @error = false
+    @error    = false
     @response = response
     parse(response)
   end
@@ -32,19 +32,24 @@ class TTK::ETrade::Session::Result
     end
   end
 
-
   private
 
   def parse(response)
-    @body = Oj.load(response.body)
     @code = response.code.to_s
+    @body = Oj.load(response.body) unless no_content?
   rescue => e
-    parse_errorw(e, response)
+    parse_error(e, response)
   end
 
   def parse_error(exception, response)
-    STDERR.puts "parse_error, msg [#{exception.message}]"
-    @error = true
-    @exception = ParseError.new("Exception: #{exception.message}, response: #{response.inspect}")
+    STDERR.puts "parse_error, msg [#{exception.message}], http status [#{code}]"
+
+      @error     = true
+      @exception = ParseError.new("Exception: #{exception.message}, response: #{response.inspect}")
+      raise @exception
+  end
+
+  def no_content?
+    code.to_i == 204
   end
 end

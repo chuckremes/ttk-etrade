@@ -19,11 +19,11 @@ module TTK::ETrade::Orders::Containers::Generators
     end
 
     def place_time
-      Central_TZ.to_local(Time.at(0))
+      Eastern_TZ.to_local(Time.at(0))
     end
 
     def execution_time
-      Central_TZ.to_local(Time.at(0))
+      Eastern_TZ.to_local(Time.at(0))
     end
 
     def status

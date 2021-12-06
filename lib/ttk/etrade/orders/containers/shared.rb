@@ -35,6 +35,13 @@ module TTK
             end
           end
 
+          def product_match?(other)
+            # assumes legs are sorted consistently
+            legs.count == other.legs.count && legs.zip(other.legs).all? do |l1, l2|
+              l1.product_match?(l2)
+            end
+          end
+
           def put?
             all?(:put?)
           end
@@ -99,8 +106,8 @@ module TTK
             legs.each { |leg| leg.subscribe(quotes, cycle: cycle, type: type) }
           end
 
-          def all?(field)
-            legs.all? { |leg| leg.send(field) }
+          def all?(field, *args)
+            legs.all? { |leg| leg.send(field, *args) }
           end
 
           def any?(field)
@@ -119,6 +126,7 @@ module TTK
           def inactive?
             !active?
           end
+
           #
           # def nice_print
           #   separator = ' | '
@@ -204,24 +212,27 @@ module TTK
 
           def nice_print
             separator = ' | '
-            now = ''.rjust(21).ljust(22)
-            action = self.action.to_s.rjust(12).ljust(13)
-            quantity = self.quantity.to_s.rjust(8).ljust(9)
-            name = osi.rjust(46).ljust(47)
+            now       = ''.rjust(21).ljust(22)
+            action    = self.action.to_s.rjust(12).ljust(13)
+            quantity  = self.quantity.to_s.rjust(8).ljust(9)
+            name      = osi.rjust(46).ljust(47)
             if respond_to?(:limit_price)
-                     # PositionLeg
-                     price = limit_price.to_s.rjust(5).ljust(6)
-                     term = order_term.to_s.rjust(10).ljust(10)
-                   else
-                     # OrderLeg of some kind so no specific data
-                     price = ''.rjust(5).ljust(6)
-                     term = ''.to_s.rjust(10).ljust(10)
+              # PositionLeg
+              price = limit_price.to_s.rjust(5).ljust(6)
+              term  = order_term.to_s.rjust(10).ljust(10)
+            else
+              # OrderLeg of some kind so no specific data
+              price = ''.rjust(5).ljust(6)
+              term  = ''.to_s.rjust(10).ljust(10)
             end
             puts [now, action, quantity, name, price, term].join(separator)
             @quote.nice_print
             nil
           end
 
+          def product_match?(other)
+            osi == other.osi
+          end
         end
 
         module LegGreeks
@@ -265,7 +276,7 @@ module TTK
         class Legs
           include Enumerable
 
-          def self.from_instrument(array, klass: ReadOnlyLeg)
+          def self.from_instrument(array, klass: ReadOnlyLeg, order: {})
             # always sort the legs before storing
             # irb(main):109:0> a.sort_by {|a| -a.strike }.sort_by {|a| a.expiration }
             # =>
@@ -274,7 +285,9 @@ module TTK
             #  #<struct O strike=500, expiration=#<Date: 2021-12-03 ((2459552j,0s,0n),+0s,2299161j)>>,
             #  #<struct O strike=410, expiration=#<Date: 2021-12-03 ((2459552j,0s,0n),+0s,2299161j)>>]
             #
-            legs = array.map { |leg| klass.new(leg) }.sort_by { |leg| -leg.strike }.sort_by { |leg| leg.expiration_date }
+            legs     = array.map { |leg| klass.new(leg, order: order) }
+                            .sort_by { |leg| -leg.strike }
+                            .sort_by { |leg| leg.expiration_date }
             instance = new(legs)
             instance
           end
@@ -313,8 +326,9 @@ module TTK
           # order is important... LegGreeks calls #super to get greeks from Subscriber
           include LegGreeks
 
-          def initialize(body)
+          def initialize(body, order: {})
             @body    = body
+            @order   = order # not used!
             @product = TTK::ETrade::Core::Product.new(body['Product'])
 
             @quote = if @product.equity?
@@ -327,6 +341,7 @@ module TTK
           def position_id
             body['positionId']
           end
+
           alias_method :order_id, :position_id # necessary for #same? check
 
           def status
@@ -337,8 +352,9 @@ module TTK
             # ETrade gives us this particular date as milliseconds from epoch
             # Also, all ETrade times are Eastern timezone so convert to our
             # local TZ
-            Central_TZ.to_local(Time.at((body['dateAcquired'] || 0) / 1000))
+            Eastern_TZ.to_local(Time.at((body['dateAcquired'] || 0) / 1000))
           end
+
           alias_method :execution_time, :date_acquired
           alias_method :place_time, :date_acquired
 
@@ -353,6 +369,7 @@ module TTK
           def filled_quantity
             body['quantity']
           end
+
           alias_method(:quantity, :filled_quantity)
 
           def unfilled_quantity
@@ -397,6 +414,7 @@ module TTK
           def closing?
             false
           end
+
           # end OVERRIDE LegShared module
 
           private attr_reader :body
@@ -424,8 +442,9 @@ module TTK
 
           attr_reader :product
 
-          def initialize(body)
+          def initialize(body, order:)
             @body    = body
+            @order   = order
             @product = TTK::ETrade::Core::Product.new(body['Product'])
 
             @quote = if @product.equity?
@@ -447,7 +466,7 @@ module TTK
           end
 
           def unfilled_quantity
-            body['orderedQuantity']
+            body['orderedQuantity'] - filled_quantity
           end
 
           def filled_quantity
@@ -462,6 +481,22 @@ module TTK
             body['estimatedFees']
           end
 
+          def limit_price
+            # by definition, an ETrade order does not track price per leg
+            # to get this info you need to back into it via the order_id of
+            # the parent order and match it against the Position and PositionLots
+            # data gathered elsewhere
+            0
+          end
+
+          def order_term
+            order.dig('orderTerm')
+          end
+
+          def execution_time
+            Eastern_TZ.to_local(Time.at((order.dig('executedTime') || 0) / 1000))
+          end
+
           # def pretty_print
           #   "Order(#{self.class}):" +
           #     "          action: #{action}\n" +
@@ -471,7 +506,7 @@ module TTK
           #     "             fees: #{fees}\n" + product.inspect
           # end
 
-          private attr_reader :body
+          private attr_reader :body, :order
         end
 
       end

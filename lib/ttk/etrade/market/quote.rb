@@ -15,7 +15,7 @@ class TTK::ETrade::Core::Quote
                  :equity_option?,
                  :osi,
                  :to_product
-  
+
   def self.make(quote_data)
     instance = new
     instance.update_quote(from_hash: quote_data)

@@ -5,13 +5,11 @@ class TTK::ETrade::Config::Orders < TTK::ETrade::Config
   end
 
   def start_date
-    # ETrade API requires this order of values
-    contents[:start_date].strftime("%m%d%Y")
+    contents[:start_date]
   end
 
   def end_date
-    # ETrade API requires this order of values
-    contents[:end_date].strftime("%m%d%Y")
+    contents[:end_date]
   end
 
   private

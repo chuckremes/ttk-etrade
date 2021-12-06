@@ -60,15 +60,15 @@ class TTK::ETrade::Session::Orders::Base < TTK::ETrade::Session::Base
 
   # Prints debug info
   def debug(url, result)
-    STDERR.puts '====== RESULT DEBUG URL ======='
+    STDERR.puts '= RES URL ='
     STDERR.puts url
-    STDERR.puts '====== RESULT DEBUG STATUS ======='
+    STDERR.puts '= RES STATUS ='
     STDERR.puts "response code = #{result.code}"
-    STDERR.puts '====== RESULT DEBUG HEADERS ======='
+    STDERR.puts '= RES HEADERS ='
     result.headers(STDERR)
-    STDERR.puts '====== RESULT DEBUG BODY ======='
+    STDERR.puts '= RES BODY ='
     STDERR.puts result.body
-    STDERR.puts '====== RESULT DEBUG END ======='
+    STDERR.puts '= RES END ='
   end
 
 end

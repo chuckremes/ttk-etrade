@@ -22,6 +22,8 @@ class TTK::ETrade::Orders::Interface
     @place_change   = TTK::ETrade::Session::Orders::PlaceChange.new(api_session: api_session)
     @cancel         = TTK::ETrade::Session::Orders::Cancel.new(api_session: api_session)
 
+    bootstrap # setup we run only once!
+
     # According to ETrade API v0 docs, the Orders APIs can be called
     # at a rate of 2 per second or 7000 per hour. Not sure if it
     # applies to the v1 API (which this implements) but it's a good
@@ -30,6 +32,8 @@ class TTK::ETrade::Orders::Interface
     @limiter = Async::Limiter::Window::Sliding.new(8, window: 1, parent: @barrier)
   end
 
+  # necessary? I don't think so since #each calls #list anyway and we don't actually
+  # save these results
   def refresh
     list(nil)
   end
@@ -40,9 +44,9 @@ class TTK::ETrade::Orders::Interface
   # Passing +nil+ for +status+ will force load all order statuses such as
   # cancelled, rejected, etc.
   #
-  def list(status = nil)
+  def list(status = nil, start_date: Date.today, end_date: Date.today)
+    array  = []
     elapsed("ELAPSED list(#{status})") do
-      array  = []
       marker = nil
       count  = 0
 
@@ -51,8 +55,8 @@ class TTK::ETrade::Orders::Interface
         # only fetches 25 orders at a time, so we may get a marker back
         # when we do, then call again and accumulate the response arrays
         response, marker = @list_orders.reload(account_key: @account.key,
-                                               start_date:  config.orders.start_date,
-                                               end_date:    config.orders.end_date,
+                                               start_date:  start_date,
+                                               end_date:    end_date,
                                                marker:      marker,
                                                status:      status)
         array            += response
@@ -61,16 +65,17 @@ class TTK::ETrade::Orders::Interface
       raise "Holy cow, fetched orders 100 times!!!" if count > 100
 
       array.map! { |order_response| TTK::ETrade::Orders::Containers::Response::Existing.new(body: order_response) }
-      # process_list(array)
-      @list_cache = filter(array).map do |element|
+      array = filter(array).map do |element|
         TTK::ETrade::Orders::Containers::Existing.new(interface: self, body: element, account_key: @account.key)
       end
     end
-    @list_cache
+    array
   end
 
   def each(&blk)
-    list(nil).each { |e| yield(e) }
+    # refreshes today's orders and adds in the historical that we
+    # collected at bootstrap time
+    (list(nil) + @historical_list).each { |e| yield(e) }
   end
 
   def new_vertical_spread(body_leg:, wing_leg:)
@@ -137,37 +142,18 @@ class TTK::ETrade::Orders::Interface
     result
   end
 
-  def process_list(array)
-    filter(array).each do |order|
-      create_or_reload(order)
-    end
-  end
-
   def filter(array)
     return array if config.orders.allowed_underlying.empty?
 
     array #.select { |order| config.orders.allowed_underlying.include?(order['Product']['symbol']) }
   end
 
-  def create_or_reload(order)
-    # not sure I even need this
-    # the #list method wraps each element in a Response::Existing... the call to reload
-    # just downloads another exact copy of what #list just returned, so that's uselss.
-    # all this method does then is wrap the Response in a Container which the parent
-    # could do too.
-    item = @list_cache.find { |o| o.order_id == order.order_id }
-
-    if item
-      # puts "Telling container to reload itself for order_id [#{order['orderId']}]"
-      item.reload
-    else
-      # puts "Never seen order_id [#{order['orderId']}] before, load for first time"
-      item = TTK::ETrade::Orders::Containers::Existing.new(interface: self, body: order, account_key: @account.key)
-      raise "somehow item is nil" if item.nil?
-      @list_cache << item
-    end
-
-    nil
+  def bootstrap
+    # load all the historical orders once
+    from_date = config.orders.start_date
+    to_date = config.orders.end_date - 1  # start from 1 day before
+    @historical_list = list(nil, start_date: from_date, end_date: to_date)
+    STDERR.puts "Received #{@historical_list.size} historical order records from [#{from_date}] to [#{to_date}]"
   end
 
   def elapsed(d)

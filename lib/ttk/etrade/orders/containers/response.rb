@@ -34,7 +34,7 @@ class TTK::ETrade::Orders::Containers::Response
   # then look at refactoring opportunities.
 
   def legs
-    @legs ||= TTK::ETrade::Orders::Containers::Legs.from_instrument(order.dig('Instrument'))
+    @legs ||= TTK::ETrade::Orders::Containers::Legs.from_instrument(order.dig('Instrument'), order: order)
   end
 
   def order_type
@@ -52,18 +52,18 @@ class TTK::ETrade::Orders::Containers::Response
   end
 
   def preview_time
-    Central_TZ.to_local(Time.at((order['previewTime'] || 0) / 1000))
+    Eastern_TZ.to_local(Time.at((order['previewTime'] || 0) / 1000))
   end
 
   def placed_time
-    Central_TZ.to_local(Time.at((order['placedTime'] || 0) / 1000))
+    Eastern_TZ.to_local(Time.at((order['placedTime'] || 0) / 1000))
   end
 
   def execution_time
     # ETrade gives us this particular date as milliseconds from epoch
     # Also, all ETrade times are Eastern timezone so convert to our
     # local TZ
-    Central_TZ.to_local(Time.at((order['executionTime'] || 0) / 1000))
+    Eastern_TZ.to_local(Time.at((order['executedTime'] || 0) / 1000))
   end
 
   def dst_flag
@@ -231,7 +231,7 @@ class TTK::ETrade::Orders::Containers::Response::Cancel
   end
 
   def cancel_time
-    Central_TZ.to_local((body['cancelTime'] / 1000.0) || 0)
+    Eastern_TZ.to_local((body['cancelTime'] / 1000.0) || 0)
   end
 
 end
