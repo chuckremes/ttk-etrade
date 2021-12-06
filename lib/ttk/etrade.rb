@@ -82,9 +82,9 @@ require_relative 'etrade/session/orders/list'
 require_relative 'etrade/session/orders/load'
 require_relative 'etrade/session/portfolio/list'
 
-require_relative 'etrade/options/chain'
-require_relative 'etrade/options/option_expirations'
-require_relative 'etrade/options/chains'
+require_relative 'etrade/market/chain'
+require_relative 'etrade/market/option_expirations'
+require_relative 'etrade/market/chains'
 
 require_relative 'etrade/orders/containers/shared'
 require_relative 'etrade/orders/containers/generators'

@@ -15,6 +15,17 @@ Most of these classes implement an interface that the TTK supports via duck typi
                          |- positions ---|- SpreadPosition
                          |- orders       -  FuturesPosition
 
+# Rate Limits
+
+ETrade REST API v1 (circa 2018) has the following rate limits per their support team.
+
+* Accounts Module = 35,600 / hour or 593 / second
+* Markets Module = 140,000 / hour or 2333 / second
+* Orders Module = 17,800 / hour or 296 / second
+* Users Module = 35,600 / hour
+
+They note that Options Chains use the Markets module so downloading lots of chains repeatedly can rapidly consume the quota.
+
 # Plans
 
 1. Make it work
