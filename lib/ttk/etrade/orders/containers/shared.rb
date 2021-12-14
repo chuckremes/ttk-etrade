@@ -466,6 +466,7 @@ module TTK
           end
 
           def unfilled_quantity
+            return 0 unless body['orderedQuantity']
             body['orderedQuantity'] - filled_quantity
           end
 

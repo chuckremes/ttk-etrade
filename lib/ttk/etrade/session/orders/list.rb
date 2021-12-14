@@ -5,6 +5,7 @@
 class TTK::ETrade::Session::Orders::List < TTK::ETrade::Session::Orders::Base
 
   def reload(account_key:, start_date:, end_date:, marker:, status: :open)
+    puts "Loading Orders from [#{start_date}] to [#{end_date}]"
     count = 25
     params = {
       fromDate: convert_date(start_date),

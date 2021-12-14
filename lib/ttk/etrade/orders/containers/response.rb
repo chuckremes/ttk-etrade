@@ -9,7 +9,6 @@ require_relative 'generators'
 # so they can be used interchangeably.
 #
 class TTK::ETrade::Orders::Containers::Response
-  # include TTK::ETrade::Orders::Containers::ContainerShared
 
   def initialize(body:)
     @body = body
