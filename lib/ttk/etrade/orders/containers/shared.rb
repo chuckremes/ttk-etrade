@@ -329,7 +329,7 @@ module TTK
           def initialize(body, order: {})
             @body    = body
             @order   = order # not used!
-            @product = TTK::ETrade::Core::Product.new(body['Product'])
+            @product = TTK::ETrade::Containers::Product.new(body['Product'])
 
             @quote = if @product.equity?
                        TTK::ETrade::Core::Quote::Intraday.null(body['Product']) # null object pattern
@@ -445,7 +445,7 @@ module TTK
           def initialize(body, order:)
             @body    = body
             @order   = order
-            @product = TTK::ETrade::Core::Product.new(body['Product'])
+            @product = TTK::ETrade::Containers::Product.new(body['Product'])
 
             @quote = if @product.equity?
                        TTK::ETrade::Core::Quote::Intraday.null(body['Product']) # null object pattern

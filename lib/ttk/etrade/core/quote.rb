@@ -63,7 +63,7 @@ class TTK::ETrade::Core::Quote
     # we need to access its internal +quote+ ivar. We make a
     # duplicate so they can potentially change indpendently.
     @quote = from_hash.nil? ? from_quote.quote.dup : from_hash
-    @product = TTK::ETrade::Core::Product.new(@quote['Product'])
+    @product = TTK::ETrade::Containers::Product.new(@quote['Product'])
   end
 
   def quote_timestamp

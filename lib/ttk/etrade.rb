@@ -7,6 +7,9 @@ module TTK
     class Config
     end
 
+    module Containers
+    end
+
     module Core
     end
 
@@ -66,7 +69,8 @@ require_relative 'etrade/core/login'
 require_relative 'etrade/core/balances'
 require_relative 'etrade/core/accounts'
 require_relative 'etrade/core/account'
-require_relative 'etrade/core/product'
+# require_relative 'etrade/core/product'
+require_relative 'etrade/containers/product/product'
 
 require_relative 'etrade/session/base'
 require_relative 'etrade/session/result'
