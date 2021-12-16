@@ -1,4 +1,4 @@
-require 'oj'
+require "oj"
 
 class TTK::ETrade::Errors::Session < StandardError
   def initialize(code:, message:, context:)

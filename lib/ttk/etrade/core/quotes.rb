@@ -3,7 +3,7 @@
 #
 class TTK::ETrade::Core::Quotes < TTK::ETrade::Core::Session
   MAX_SYMBOLS = 25
-  URL         = '/v1/market/quote/'
+  URL         = "/v1/market/quote/"
 
   def initialize(config:, api_session:, parent: nil, body: {}, reload_now: true)
     super
@@ -17,12 +17,12 @@ class TTK::ETrade::Core::Quotes < TTK::ETrade::Core::Session
   end
 
   def equity_quote(symbols)
-    quotes = quote(symbols, { detailFlag: 'INTRADAY' })
+    quotes = quote(symbols, { detailFlag: "INTRADAY" })
     wrap(quotes: quotes, klass: TTK::ETrade::Core::Quote::Intraday)
   end
 
   def equity_option_quote(symbols)
-    quotes = quote(symbols, { detailFlag: 'OPTIONS' })
+    quotes = quote(symbols, { detailFlag: "OPTIONS" })
     wrap(quotes: quotes, klass: TTK::ETrade::Core::Quote::Options)
   end
 
@@ -34,8 +34,8 @@ class TTK::ETrade::Core::Quotes < TTK::ETrade::Core::Session
       subarray = symbols.slice(slice_index, MAX_SYMBOLS) || []
       break if subarray.empty?
 
-      # get 'em
-      symbol_path = URL + subarray.join(',')
+      # get "em
+      symbol_path = URL + subarray.join(",")
       result      = get(symbol_path, query_params: query)
       @body       = if result.success?
                       result.value
@@ -44,13 +44,13 @@ class TTK::ETrade::Core::Quotes < TTK::ETrade::Core::Session
                       {}
                     end
 
-      quotes.concat((@body.dig('QuoteResponse', 'QuoteData') || []))
+      quotes.concat((@body.dig("QuoteResponse", "QuoteData") || []))
       # p @body
       # binding.pry
       slice_index += MAX_SYMBOLS
     end while true
 
-    # p 'quotes size', quotes.size
+    # p "quotes size", quotes.size
     quotes
   end
 

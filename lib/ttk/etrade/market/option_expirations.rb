@@ -26,20 +26,20 @@ class TTK::ETrade::Options::OptionExpirations
     end
 
     def year
-      body.dig('year')
+      body.dig("year")
     end
 
     def month
-      body.dig('month')
+      body.dig("month")
     end
 
     def day
-      body.dig('day')
+      body.dig("day")
     end
 
     def type
       # WEEKLY, MONTHEND, MONTHLY, QUARTERLY
-      body.dig('expiryType').downcase.to_sym
+      body.dig("expiryType").downcase.to_sym
     end
 
     def date

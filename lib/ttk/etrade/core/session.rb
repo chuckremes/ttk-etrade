@@ -31,8 +31,8 @@ class TTK::ETrade::Core::Session
   def error_check(result, context:)
     return if result.success?
 
-    code = result.value.split('<code>')[1].split('</code>').first.to_i
-    message = result.value.split('<message>')[1].split('</message>').first
+    code = result.value.split("<code>")[1].split("</code>").first.to_i
+    message = result.value.split("<message>")[1].split("</message>").first
     raise TTK::ETrade::Errors::Errors[code].new(code: code, message: message, context: context)
   end
 

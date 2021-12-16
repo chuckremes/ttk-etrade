@@ -14,7 +14,7 @@ class TTK::ETrade::Session::Orders::Preview < TTK::ETrade::Session::Orders::Base
                                    account_key: account_key,
                                    payload: payload })
 
-    result.value.dig('PreviewOrderResponse') || {}
+    result.value.dig("PreviewOrderResponse") || {}
   end
 end
 

@@ -5,7 +5,7 @@
 class TTK::ETrade::Core::Accounts < TTK::ETrade::Core::Session
   include Enumerable
 
-  URL_PATH = '/v1/accounts/list'
+  URL_PATH = "/v1/accounts/list"
 
   attr_reader :quotes
 
@@ -53,31 +53,31 @@ class TTK::ETrade::Core::Accounts < TTK::ETrade::Core::Session
   private
 
   def list
-    body.dig('AccountListResponse', 'Accounts', 'Account') || []
+    body.dig("AccountListResponse", "Accounts", "Account") || []
   end
 
   def active(accs)
     return accs unless config.accounts.active_only
 
-    accs.select { |account| account['accountStatus'] == 'ACTIVE' }
+    accs.select { |account| account["accountStatus"] == "ACTIVE" }
   end
 
   def types(accs)
     return accs if config.accounts.types.empty?
 
-    accs.select { |account| config.accounts.types.include?(account['accountType']) }
+    accs.select { |account| config.accounts.types.include?(account["accountType"]) }
   end
 
   def institution_types(accs)
     return accs if config.accounts.institution_types.empty?
 
-    accs.select { |account| config.accounts.institution_types.include?(account['institutionType']) }
+    accs.select { |account| config.accounts.institution_types.include?(account["institutionType"]) }
   end
 
   # Only create the Account object once. Upon creation, the Account loads itself.
   # On subsequent reloads, ask the Account instance to reload itself.
   def create_or_reload(account)
-    item = @cache.find { |acc| acc.id == account['accountId'] }
+    item = @cache.find { |acc| acc.id == account["accountId"] }
 
     if item
       item.reload

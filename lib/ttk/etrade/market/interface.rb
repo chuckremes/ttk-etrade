@@ -1,5 +1,5 @@
-require 'async'
-require 'async/barrier'
+require "async"
+require "async/barrier"
 require "async/limiter/window/sliding"
 
 class TTK::ETrade::Market::Interface
@@ -15,7 +15,7 @@ class TTK::ETrade::Market::Interface
 
     # According to ETrade API v0 docs, the Account APIs can be called
     # at a rate of 2 per second or 7000 per hour. Not sure if it
-    # applies to the v1 API (which this implements) but it's a good
+    # applies to the v1 API (which this implements) but it"s a good
     # baseline.
     @barrier = Async::Barrier.new
     @limiter = Async::Limiter::Window::Sliding.new(8, window: 1, parent: @barrier)
@@ -60,12 +60,12 @@ class TTK::ETrade::Market::Interface
   end
 
   def equity_quote(symbols)
-    quotes = quote(symbols, { detailFlag: 'INTRADAY' })
+    quotes = quote(symbols, { detailFlag: "INTRADAY" })
     wrap(quotes: quotes, klass: TTK::ETrade::Market::Quote::Intraday)
   end
 
   def equity_option_quote(symbols)
-    quotes = quote(symbols, { detailFlag: 'OPTIONS' })
+    quotes = quote(symbols, { detailFlag: "OPTIONS" })
     wrap(quotes: quotes, klass: TTK::ETrade::Market::Quote::Options)
   end
 

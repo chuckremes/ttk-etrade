@@ -10,18 +10,18 @@ class TTK::ETrade::Core::Account < TTK::ETrade::Core::Session
 
   def self.type(code)
     case code
-    when 'CUSTODIAL' then :custodial
-    when 'CONTRIBUTORY' then :contributory
-    when 'INDIVIDUAL_K' then :solo_401k
+    when "CUSTODIAL" then :custodial
+    when "CONTRIBUTORY" then :contributory
+    when "INDIVIDUAL_K" then :solo_401k
     else
-      STDERR.puts "code (#{code}) == 'CONTRIBUTORY' => #{code == 'CONTRIBUTORY'}"
+      STDERR.puts "code (#{code}) == "CONTRIBUTORY" => #{code == "CONTRIBUTORY"}"
       raise UnknownType.new("code: #{code.inspect}")
     end
   end
 
   def self.institution_type(code)
     case code
-    when 'BROKERAGE' then :brokerage
+    when "BROKERAGE" then :brokerage
     else
       raise UnknownInstitutionType.new("code: #{code.inspect}")
     end
@@ -29,8 +29,8 @@ class TTK::ETrade::Core::Account < TTK::ETrade::Core::Session
 
   def self.status(code)
     case code
-    when 'ACTIVE' then :active
-    when 'CLOSED' then :closed
+    when "ACTIVE" then :active
+    when "CLOSED" then :closed
     else
       raise UnknownStatus.new("code: #{code.inspect}")
     end
@@ -47,27 +47,27 @@ class TTK::ETrade::Core::Account < TTK::ETrade::Core::Session
   end
 
   def id
-    body['accountId']
+    body["accountId"]
   end
 
   def key
-    body['accountIdKey']
+    body["accountIdKey"]
   end
 
   def name
-    body['accountName']
+    body["accountName"]
   end
 
   def active?
-    self.class.status(body['accountStatus']) == :active
+    self.class.status(body["accountStatus"]) == :active
   end
 
   def type
-    self.class.type(body['accountType'])
+    self.class.type(body["accountType"])
   end
 
   def institution_type
-    self.class.institution_type(body['institutionType'])
+    self.class.institution_type(body["institutionType"])
   end
 
   def reload(session_ref = api_session)
@@ -125,15 +125,15 @@ end
 
 class TTK::ETrade::Core::Account::Null
   def id()
-    ; 'null';
+    ; "null";
   end
 
   def key()
-    ; 'null';
+    ; "null";
   end
 
   def name()
-    ; 'null';
+    ; "null";
   end
 
   def active?()
@@ -141,11 +141,11 @@ class TTK::ETrade::Core::Account::Null
   end
 
   def type()
-    ; 'null';
+    ; "null";
   end
 
   def institution_type()
-    ; 'null';
+    ; "null";
   end
 end
 

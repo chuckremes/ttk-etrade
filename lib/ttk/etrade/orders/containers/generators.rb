@@ -1,5 +1,5 @@
-require 'forwardable'
-require_relative 'shared'
+require "forwardable"
+require_relative "shared"
 
 # These classes all work together. The Container classes use
 # these helpers to collect the information on an order and then
@@ -7,7 +7,7 @@ require_relative 'shared'
 # for the API calls to ETrade.
 #
 module TTK::ETrade::Orders::Containers::Generators
-  # Let's us set all sorts of variables on this structure. Then we can
+  # Let"s us set all sorts of variables on this structure. Then we can
   # call #to_preview, #to_preview_change, or #to_place and it will
   # auto-generate the correct hash body.
   #
@@ -37,9 +37,9 @@ module TTK::ETrade::Orders::Containers::Generators
     def order_type=(value)
       raise "Bad value [#{value}]" unless [:equity, :equity_option, :spread].include?(value)
       @order_type = case value
-                    when :equity then 'EQ'
-                    when :equity_option then 'OPTN'
-                    when :spread then 'SPREADS'
+                    when :equity then "EQ"
+                    when :equity_option then "OPTN"
+                    when :spread then "SPREADS"
                     end
     end
 
@@ -67,17 +67,17 @@ module TTK::ETrade::Orders::Containers::Generators
                                            :stop_limit, :even, :market_on_open,
                                            :market_on_close, :limit_on_open, :limit_on_close].include?(value)
       @price_type = case value
-                    when :credit then 'NET_CREDIT'
-                    when :debit then 'NET_DEBIT'
-                    when :market then 'MARKET'
-                    when :limit then 'LIMIT'
-                    when :stop then 'STOP'
-                    when :stop_limit then 'STOP_LIMIT'
-                    when :even then 'NET_EVEN'
-                    when :market_on_open then 'MARKET_ON_OPEN'
-                    when :market_on_close then 'MARKET_ON_CLOSE'
-                    when :limit_on_open then 'LIMIT_ON_OPEN'
-                    when :limit_on_close then 'LIMIT_ON_CLOSE'
+                    when :credit then "NET_CREDIT"
+                    when :debit then "NET_DEBIT"
+                    when :market then "MARKET"
+                    when :limit then "LIMIT"
+                    when :stop then "STOP"
+                    when :stop_limit then "STOP_LIMIT"
+                    when :even then "NET_EVEN"
+                    when :market_on_open then "MARKET_ON_OPEN"
+                    when :market_on_close then "MARKET_ON_CLOSE"
+                    when :limit_on_open then "LIMIT_ON_OPEN"
+                    when :limit_on_close then "LIMIT_ON_CLOSE"
                     end
     end
 
@@ -107,44 +107,44 @@ module TTK::ETrade::Orders::Containers::Generators
     def order_term=(value)
       raise "Bad value [#{value}]" unless [:day, :gtc].include?(value)
       @order_term = case value
-                    when :day then 'GOOD_FOR_DAY'
-                    when :gtc then 'GOOD_UNTIL_CANCEL'
-                    when :gtd then 'GOOD_TILL_DATE'
-                    when :immediate then 'IMMEDIATE_OR_CANCEL'
-                    when :fok then 'FILL_OR_KILL'
+                    when :day then "GOOD_FOR_DAY"
+                    when :gtc then "GOOD_UNTIL_CANCEL"
+                    when :gtd then "GOOD_TILL_DATE"
+                    when :immediate then "IMMEDIATE_OR_CANCEL"
+                    when :fok then "FILL_OR_KILL"
                     end
     end
 
     def order_term
-      @order_term || 'GOOD_FOR_DAY'
+      @order_term || "GOOD_FOR_DAY"
     end
 
     def market_session=(value)
       raise "Bad value [#{value}]" unless [:regular, :extended].include?(value)
       @order_term = case value
-                    when :regular then 'REGULAR'
-                    when :extended then 'EXTENDED'
+                    when :regular then "REGULAR"
+                    when :extended then "EXTENDED"
                     end
     end
 
     def market_session
-      @market_session || 'REGULAR'
+      @market_session || "REGULAR"
     end
 
     def to_preview
       {
-        'PreviewOrderRequest' => {
-          'orderType'     => order_type,
-          'clientOrderId' => client_order_id,
-          'Order'         => [
+        "PreviewOrderRequest" => {
+          "orderType"     => order_type,
+          "clientOrderId" => client_order_id,
+          "Order"         => [
             {
-              'allOrNone'     => all_or_none,
-              'priceType'     => price_type,
-              'limitPrice'    => limit_price.round(2).to_s,
-              'stopPrice'     => stop_price.round(2).to_s,
-              'orderTerm'     => order_term,
-              'marketSession' => market_session,
-              'Instrument'    => legs.to_instrument
+              "allOrNone"     => all_or_none,
+              "priceType"     => price_type,
+              "limitPrice"    => limit_price.round(2).to_s,
+              "stopPrice"     => stop_price.round(2).to_s,
+              "orderTerm"     => order_term,
+              "marketSession" => market_session,
+              "Instrument"    => legs.to_instrument
             }
           ]
         }
@@ -153,23 +153,23 @@ module TTK::ETrade::Orders::Containers::Generators
 
     def to_place(preview)
       {
-        'PlaceOrderRequest' => {
-          'orderType'     => order_type,
-          'clientOrderId' => client_order_id,
-          'PreviewIds' => [
+        "PlaceOrderRequest" => {
+          "orderType"     => order_type,
+          "clientOrderId" => client_order_id,
+          "PreviewIds" => [
             {
-              'previewId' => preview.preview_id
+              "previewId" => preview.preview_id
             }
           ],
-          'Order'         => [
+          "Order"         => [
             {
-              'allOrNone'     => all_or_none,
-              'priceType'     => price_type,
-              'limitPrice'    => limit_price.round(2).to_s,
-              'stopPrice'     => stop_price.round(2).to_s,
-              'orderTerm'     => order_term,
-              'marketSession' => market_session,
-              'Instrument'    => legs.to_instrument
+              "allOrNone"     => all_or_none,
+              "priceType"     => price_type,
+              "limitPrice"    => limit_price.round(2).to_s,
+              "stopPrice"     => stop_price.round(2).to_s,
+              "orderTerm"     => order_term,
+              "marketSession" => market_session,
+              "Instrument"    => legs.to_instrument
             }
           ]
         }
@@ -178,8 +178,8 @@ module TTK::ETrade::Orders::Containers::Generators
 
     def to_cancel(order_id)
       {
-        'CancelOrderRequest' => {
-          'orderId' => order_id
+        "CancelOrderRequest" => {
+          "orderId" => order_id
         }
       }
     end
@@ -193,7 +193,7 @@ module TTK::ETrade::Orders::Containers::Generators
     end
 
     def leg=(value)
-      # kind_of? and is_a? doesn't work right with delegates
+      # kind_of? and is_a? doesn"t work right with delegates
       # raise "Bad value #{value}" unless value.kind_of?(TTK::ETrade::Orders::Containers::LegShared) # Quote, yada yada
       raise "Bad value #{value}" unless value.kind_of?(BasicObject) # Quote, yada yada
       @leg = value
@@ -306,10 +306,10 @@ module TTK::ETrade::Orders::Containers::Generators
 
     def to_instrument
       {
-        'Product'         => quote.to_product,
-        'orderAction'     => action,
-        'orderedQuantity' => quantity.to_s,
-        'quantity'        => quantity.to_s
+        "Product"         => quote.to_product,
+        "orderAction"     => action,
+        "orderedQuantity" => quantity.to_s,
+        "quantity"        => quantity.to_s
       }
     end
 
@@ -342,12 +342,12 @@ module TTK::ETrade::Orders::Containers::Generators
       raise "Bad value [#{value}]" unless [:sell_to_open, :sell_to_close, :buy_to_open, :buy_to_close,
                                            :buy, :sell].include?(value)
       @action = case value
-                when :sell_to_open then 'SELL_OPEN'
-                when :sell_to_close then 'SELL_CLOSE'
-                when :buy_to_open then 'BUY_OPEN'
-                when :buy_to_close then 'BUY_CLOSE'
-                when :buy then 'BUY'
-                when :sell then 'SELL'
+                when :sell_to_open then "SELL_OPEN"
+                when :sell_to_close then "SELL_CLOSE"
+                when :buy_to_open then "BUY_OPEN"
+                when :buy_to_close then "BUY_CLOSE"
+                when :buy then "BUY"
+                when :sell then "SELL"
                 end
     end
 

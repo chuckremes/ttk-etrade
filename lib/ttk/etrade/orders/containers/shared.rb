@@ -119,7 +119,7 @@ module TTK
           end
 
           def active?
-            # :new is defined for an order we haven't downloaded yet
+            # :new is defined for an order we haven"t downloaded yet
             [:new, :open, :cancel_requested, :partial, :individual_fills].include?(status)
           end
 
@@ -129,7 +129,7 @@ module TTK
 
           #
           # def nice_print
-          #   separator = ' | '
+          #   separator = " | "
           #   now = Time.now.strftime("%Y%m%d-%H:%M:%S.%L").rjust(21).ljust(22)
           #   action = self.sides.first.to_s.rjust(12).ljust(13)
           #   quantity = self.quantity.to_s.rjust(8).ljust(9)
@@ -211,8 +211,8 @@ module TTK
           end
 
           def nice_print
-            separator = ' | '
-            now       = ''.rjust(21).ljust(22)
+            separator = " | "
+            now       = "".rjust(21).ljust(22)
             action    = self.action.to_s.rjust(12).ljust(13)
             quantity  = self.quantity.to_s.rjust(8).ljust(9)
             name      = osi.rjust(46).ljust(47)
@@ -222,8 +222,8 @@ module TTK
               term  = order_term.to_s.rjust(10).ljust(10)
             else
               # OrderLeg of some kind so no specific data
-              price = ''.rjust(5).ljust(6)
-              term  = ''.to_s.rjust(10).ljust(10)
+              price = "".rjust(5).ljust(6)
+              term  = "".to_s.rjust(10).ljust(10)
             end
             puts [now, action, quantity, name, price, term].join(separator)
             @quote.nice_print
@@ -329,17 +329,17 @@ module TTK
           def initialize(body, order: {})
             @body    = body
             @order   = order # not used!
-            @product = TTK::ETrade::Containers::Product.new(body['Product'])
+            @product = TTK::ETrade::Containers::Product.new(body["Product"])
 
             @quote = if @product.equity?
-                       TTK::ETrade::Core::Quote::Intraday.null(body['Product']) # null object pattern
+                       TTK::ETrade::Core::Quote::Intraday.null(body["Product"]) # null object pattern
                      else
-                       TTK::ETrade::Core::Quote::Options.null(body['Product']) # null object pattern
+                       TTK::ETrade::Core::Quote::Options.null(body["Product"]) # null object pattern
                      end
           end
 
           def position_id
-            body['positionId']
+            body["positionId"]
           end
 
           alias_method :order_id, :position_id # necessary for #same? check
@@ -352,14 +352,14 @@ module TTK
             # ETrade gives us this particular date as milliseconds from epoch
             # Also, all ETrade times are Eastern timezone so convert to our
             # local TZ
-            Eastern_TZ.to_local(Time.at((body['dateAcquired'] || 0) / 1000))
+            Eastern_TZ.to_local(Time.at((body["dateAcquired"] || 0) / 1000))
           end
 
           alias_method :execution_time, :date_acquired
           alias_method :place_time, :date_acquired
 
           def limit_price
-            body['pricePaid']
+            body["pricePaid"]
           end
 
           def stop_price
@@ -367,7 +367,7 @@ module TTK
           end
 
           def filled_quantity
-            body['quantity']
+            body["quantity"]
           end
 
           alias_method(:quantity, :filled_quantity)
@@ -377,19 +377,19 @@ module TTK
           end
 
           def last_price
-            body.dig('Quick', 'lastTrade')
+            body.dig("Quick", "lastTrade")
           end
 
           def commission
-            body['commissions']
+            body["commissions"]
           end
 
           def fees
-            body['otherFees']
+            body["otherFees"]
           end
 
           def type
-            body['positionType'].downcase.to_sym
+            body["positionType"].downcase.to_sym
           end
 
           def action
@@ -407,7 +407,7 @@ module TTK
 
           def opening?
             # by definition, a *position* is "opening"... if it had been offset
-            # to close, then it wouldn't show up as a position at all
+            # to close, then it wouldn"t show up as a position at all
             true
           end
 
@@ -445,41 +445,41 @@ module TTK
           def initialize(body, order:)
             @body    = body
             @order   = order
-            @product = TTK::ETrade::Containers::Product.new(body['Product'])
+            @product = TTK::ETrade::Containers::Product.new(body["Product"])
 
             @quote = if @product.equity?
-                       TTK::ETrade::Core::Quote::Intraday.null(body['Product']) # null object pattern
+                       TTK::ETrade::Core::Quote::Intraday.null(body["Product"]) # null object pattern
                      else
-                       TTK::ETrade::Core::Quote::Options.null(body['Product']) # null object pattern
+                       TTK::ETrade::Core::Quote::Options.null(body["Product"]) # null object pattern
                      end
           end
 
           def action
-            @action ||= case body['orderAction']
-                        when 'BUY_OPEN' then :buy_to_open
-                        when 'SELL_OPEN' then :sell_to_open
-                        when 'BUY_CLOSE' then :buy_to_close
-                        when 'SELL_CLOSE' then :sell_to_close
-                        when 'BUY' then :buy
-                        when 'SELL' then :sell
+            @action ||= case body["orderAction"]
+                        when "BUY_OPEN" then :buy_to_open
+                        when "SELL_OPEN" then :sell_to_open
+                        when "BUY_CLOSE" then :buy_to_close
+                        when "SELL_CLOSE" then :sell_to_close
+                        when "BUY" then :buy
+                        when "SELL" then :sell
                         end
           end
 
           def unfilled_quantity
-            return 0 unless body['orderedQuantity']
-            body['orderedQuantity'] - filled_quantity
+            return 0 unless body["orderedQuantity"]
+            body["orderedQuantity"] - filled_quantity
           end
 
           def filled_quantity
-            body['filledQuantity']
+            body["filledQuantity"]
           end
 
           def commission
-            body['estimatedCommission']
+            body["estimatedCommission"]
           end
 
           def fees
-            body['estimatedFees']
+            body["estimatedFees"]
           end
 
           def limit_price
@@ -491,11 +491,11 @@ module TTK
           end
 
           def order_term
-            order.dig('orderTerm')
+            order.dig("orderTerm")
           end
 
           def execution_time
-            Eastern_TZ.to_local(Time.at((order.dig('executedTime') || 0) / 1000))
+            Eastern_TZ.to_local(Time.at((order.dig("executedTime") || 0) / 1000))
           end
 
           # def pretty_print

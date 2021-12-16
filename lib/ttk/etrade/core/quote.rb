@@ -1,4 +1,4 @@
-require 'forwardable'
+require "forwardable"
 
 class TTK::ETrade::Core::Quote
   attr_reader :product, :quote
@@ -26,7 +26,7 @@ class TTK::ETrade::Core::Quote
     make(
       {
         "dateTimeUTC" => 0,
-        "quoteStatus" => 'DELAYED',
+        "quoteStatus" => "DELAYED",
         "ahFlag"      => "false",
         "Option"      =>
           { "ask"               => 0,
@@ -38,7 +38,7 @@ class TTK::ETrade::Core::Quote
             "openInterest"      => 0,
             "intrinsicValue"    => 0,
             "timePremium"       => 0,
-            "symbolDescription" => 'Null quote',
+            "symbolDescription" => "Null quote",
             "OptionGreeks"      =>
               { "rho"          => 0,
                 "vega"         => 0,
@@ -48,13 +48,13 @@ class TTK::ETrade::Core::Quote
                 "iv"           => 0,
                 "currentValue" => false } },
         "Product"     =>
-          { "symbol"       => product['symbol'] || 'NULLSYMBOL',
-            "securityType" => product['security_type'] || 'null',
-            "callPut"      => product['optionType'] || 'none',
-            "expiryYear"   => product['expiryYear'] || 0,
-            "expiryMonth"  => product['expiryMonth'] || 0,
-            "expiryDay"    => product['expiryDay'] || 0,
-            "strikePrice"  => product['strikePrice'] || 0 } }
+          { "symbol"       => product["symbol"] || "NULLSYMBOL",
+            "securityType" => product["security_type"] || "null",
+            "callPut"      => product["optionType"] || "none",
+            "expiryYear"   => product["expiryYear"] || 0,
+            "expiryMonth"  => product["expiryMonth"] || 0,
+            "expiryDay"    => product["expiryDay"] || 0,
+            "strikePrice"  => product["strikePrice"] || 0 } }
     )
   end
 
@@ -63,52 +63,52 @@ class TTK::ETrade::Core::Quote
     # we need to access its internal +quote+ ivar. We make a
     # duplicate so they can potentially change indpendently.
     @quote = from_hash.nil? ? from_quote.quote.dup : from_hash
-    @product = TTK::ETrade::Containers::Product.new(@quote['Product'])
+    @product = TTK::ETrade::Containers::Product.new(@quote["Product"])
   end
 
   def quote_timestamp
-    Eastern_TZ.to_local(Time.at(quote['dateTimeUTC'] || 0))
+    Eastern_TZ.to_local(Time.at(quote["dateTimeUTC"] || 0))
   end
 
   def quote_status
-    quote['quoteStatus'].downcase.to_sym
+    quote["quoteStatus"].downcase.to_sym
   end
 
   def extended_hours?
-    quote['ahFlag'] == 'true'
+    quote["ahFlag"] == "true"
   end
 
   def ask
-    quote.dig(self.class::KEY, 'ask')
+    quote.dig(self.class::KEY, "ask")
   end
 
   def bid
-    quote.dig(self.class::KEY, 'bid')
+    quote.dig(self.class::KEY, "bid")
   end
 
   def midpoint
     if bid > 0 || ask > 0
       ((bid.to_f + ask.to_f) / 2.0).round(2, half: :down)
     else
-      # handles case where it's a non-tradeable index, e.g. VIX
+      # handles case where it"s a non-tradeable index, e.g. VIX
       last
     end
   end
 
   def last
-    quote.dig(self.class::KEY, 'lastTrade')
+    quote.dig(self.class::KEY, "lastTrade")
   end
 
   def volume
-    quote.dig(self.class::KEY, 'totalVolume')
+    quote.dig(self.class::KEY, "totalVolume")
   end
 
 
   class Intraday < TTK::ETrade::Core::Quote
-    KEY = 'Intraday'
+    KEY = "Intraday"
 
     def nice_print
-      separator = '|'
+      separator = "|"
       puts "QuoteTS".rjust(22).ljust(23) + separator +
              "Bid".rjust(8).ljust(9) + separator +
              "Ask".rjust(8).ljust(9) + separator +
@@ -122,56 +122,56 @@ class TTK::ETrade::Core::Quote
   end
 
   class Options < TTK::ETrade::Core::Quote
-    KEY = 'Option'
+    KEY = "Option"
 
     def dte
-      quote.dig(self.class::KEY, 'daysToExpiration')
+      quote.dig(self.class::KEY, "daysToExpiration")
     end
     alias_method :days_to_expiration, :dte
 
     def open_interest
-      quote.dig(self.class::KEY, 'openInterest')
+      quote.dig(self.class::KEY, "openInterest")
     end
 
     def intrinsic
-      quote.dig(self.class::KEY, 'intrinsicValue')
+      quote.dig(self.class::KEY, "intrinsicValue")
     end
 
     def extrinsic
-      quote.dig(self.class::KEY, 'timePremium')
+      quote.dig(self.class::KEY, "timePremium")
     end
 
     def multiplier
-      quote.dig(self.class::KEY, 'optionMultiplier')
+      quote.dig(self.class::KEY, "optionMultiplier")
     end
 
     def delta
-      quote.dig(self.class::KEY, 'OptionGreeks', 'delta')
+      quote.dig(self.class::KEY, "OptionGreeks", "delta")
     end
 
     def theta
-      quote.dig(self.class::KEY, 'OptionGreeks', 'theta')
+      quote.dig(self.class::KEY, "OptionGreeks", "theta")
     end
 
     def gamma
-      quote.dig(self.class::KEY, 'OptionGreeks', 'gamma')
+      quote.dig(self.class::KEY, "OptionGreeks", "gamma")
     end
 
     def vega
-      quote.dig(self.class::KEY, 'OptionGreeks', 'vega')
+      quote.dig(self.class::KEY, "OptionGreeks", "vega")
     end
 
     def rho
-      quote.dig(self.class::KEY, 'OptionGreeks', 'rho')
+      quote.dig(self.class::KEY, "OptionGreeks", "rho")
     end
 
     def iv
-      quote.dig(self.class::KEY, 'OptionGreeks', 'iv')
+      quote.dig(self.class::KEY, "OptionGreeks", "iv")
     end
     alias_method :implied_volatility, :iv
 
     def nice_print
-      separator = ' | '
+      separator = " | "
       puts "QuoteTS".rjust(21).ljust(22) + separator +
              "Bid".rjust(6).ljust(7) + separator +
              "Ask".rjust(6).ljust(7) + separator +
@@ -194,22 +194,22 @@ class TTK::ETrade::Core::Quote
   end
 
   class All < TTK::ETrade::Core::Quote
-    KEY = 'All'
+    KEY = "All"
 
     def ask_time
-      Eastern_TZ.to_local(Time.strptime(quote.dig(self.class::KEY, 'askTime'), "%H:%M:%S %z %m-%d-%Y"))
+      Eastern_TZ.to_local(Time.strptime(quote.dig(self.class::KEY, "askTime"), "%H:%M:%S %z %m-%d-%Y"))
     end
 
     def bid_time
-      Eastern_TZ.to_local(Time.strptime(quote.dig(self.class::KEY, 'bidTime'), "%H:%M:%S %z %m-%d-%Y"))
+      Eastern_TZ.to_local(Time.strptime(quote.dig(self.class::KEY, "bidTime"), "%H:%M:%S %z %m-%d-%Y"))
     end
 
     def last_Time
-      Eastern_TZ.to_local(Time.at(quote.dig(self.class::KEY, 'timeOfLastTrade') || 0))
+      Eastern_TZ.to_local(Time.at(quote.dig(self.class::KEY, "timeOfLastTrade") || 0))
     end
 
     def nice_print
-      separator = ' | '
+      separator = " | "
       puts "QuoteTS".rjust(21).ljust(22) + separator +
              "Bid".rjust(6).ljust(7) + separator +
              "Ask".rjust(6).ljust(7) + separator +

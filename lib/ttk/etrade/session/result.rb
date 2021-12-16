@@ -1,4 +1,4 @@
-require 'oj'
+require "oj"
 
 # Wraps all calls to the ETrade REST API and converts
 # the responses to Session::Result objects.

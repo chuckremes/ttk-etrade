@@ -25,9 +25,9 @@ class TTK::ETrade::Config::Positions < TTK::ETrade::Config
   end
 
   def fill_structure(hash)
-    contents[:allowed_underlying] = hash.dig('positions', 'allowed_underlying') || []
-    contents[:start_date]         = convert_date(hash.dig('positions', 'start_date')) rescue Date.today
-    contents[:end_date]           = convert_date(hash.dig('positions', 'end_date')) rescue Date.today
+    contents[:allowed_underlying] = hash.dig("positions", "allowed_underlying") || []
+    contents[:start_date]         = convert_date(hash.dig("positions", "start_date")) rescue Date.today
+    contents[:end_date]           = convert_date(hash.dig("positions", "end_date")) rescue Date.today
   end
 
   def flatten(contents)
@@ -41,7 +41,7 @@ class TTK::ETrade::Config::Positions < TTK::ETrade::Config
   end
 
   def convert_date(string)
-    Date.strptime(string, '%Y%m%d')
+    Date.strptime(string, "%Y%m%d")
   end
 end
 

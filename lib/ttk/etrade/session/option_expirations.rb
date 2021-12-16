@@ -3,7 +3,7 @@
 #
 class TTK::ETrade::Session::OptionExpirations < TTK::ETrade::Session::Base
 
-  URL = '/v1/market/optionexpiredate'
+  URL = "/v1/market/optionexpiredate"
 
   def reload(symbol)
     params = { symbol: symbol }
@@ -11,6 +11,6 @@ class TTK::ETrade::Session::OptionExpirations < TTK::ETrade::Session::Base
 
     error_check(result, context: {url: URL, query_params: params})
 
-    result.value.dig('OptionExpireDateResponse', 'ExpirationDate') || []
+    result.value.dig("OptionExpireDateResponse", "ExpirationDate") || []
   end
 end

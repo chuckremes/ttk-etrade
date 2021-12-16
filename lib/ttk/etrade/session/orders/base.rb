@@ -40,13 +40,13 @@ class TTK::ETrade::Session::Orders::Base < TTK::ETrade::Session::Base
     # STDERR.puts "#{self.class}: error_check, failure? #{result.failure?} class #{result.value.class}, #{result.value}"
 
     if result.value.is_a?(Hash)
-      return unless result.value.key?('Error')
+      return unless result.value.key?("Error")
 
-      code = result.value.dig('Error', 'code')
-      message = result.value.dig('Error', 'message')
+      code = result.value.dig("Error", "code")
+      message = result.value.dig("Error", "message")
     else
-      code = result.value.split('<code>')[1].split('</code>').first.to_i
-      message = result.value.split('<message>')[1].split('</message>').first
+      code = result.value.split("<code>")[1].split("</code>").first.to_i
+      message = result.value.split("<message>")[1].split("</message>").first
     end
 
     # check warnings first but default to errors if no warning found
@@ -60,15 +60,15 @@ class TTK::ETrade::Session::Orders::Base < TTK::ETrade::Session::Base
 
   # Prints debug info
   def debug(url, result)
-    STDERR.puts '= RES URL ='
+    STDERR.puts "= RES URL ="
     STDERR.puts url
-    STDERR.puts '= RES STATUS ='
+    STDERR.puts "= RES STATUS ="
     STDERR.puts "response code = #{result.code}"
-    STDERR.puts '= RES HEADERS ='
+    STDERR.puts "= RES HEADERS ="
     result.headers(STDERR)
-    STDERR.puts '= RES BODY ='
+    STDERR.puts "= RES BODY ="
     STDERR.puts result.body
-    STDERR.puts '= RES END ='
+    STDERR.puts "= RES END ="
   end
 
 end

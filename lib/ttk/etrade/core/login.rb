@@ -1,5 +1,5 @@
-require_relative '../../../../../ttk-etrade-oauth/lib/ttk/etrade/oauth'
-require 'launchy'
+require_relative "../../../../../ttk-etrade-oauth/lib/ttk/etrade/oauth"
+require "launchy"
 
 # 1. Try to load an existing token and use it.
 # a. If expired, go through full process
@@ -57,13 +57,13 @@ class TTK::ETrade::Core::Login
         code
       end
 
-      # When this raises it's likely due to the above block generating an
+      # When this raises it"s likely due to the above block generating an
       # error and not returning a valid code
       raise FailedAuthenticationBlock.new("Session auth failed! Check block outcome.") if session.expired?
     end
 
     def self.persist(session, token_path)
-      File.open(token_path, 'wb') do |f|
+      File.open(token_path, "wb") do |f|
         f.write(Marshal.dump(session))
       end
     end

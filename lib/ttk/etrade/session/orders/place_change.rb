@@ -13,7 +13,7 @@ class TTK::ETrade::Session::Orders::PlaceChange < TTK::ETrade::Session::Orders::
                                    payload: payload,
                                    order_id: order_id })
 
-    result.value.dig('PlaceOrderResponse') || {}
+    result.value.dig("PlaceOrderResponse") || {}
   end
 end
 

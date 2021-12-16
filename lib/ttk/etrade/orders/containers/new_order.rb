@@ -1,5 +1,5 @@
-require_relative 'generators'
-require 'forwardable'
+require_relative "generators"
+require "forwardable"
 
 # Used when specifying the contents of a new order. Subclasses
 # handle specialty types like equity, equity_option, and spread.
@@ -86,7 +86,7 @@ class TTK::ETrade::Orders::Containers::NewOneLeg
     @preview = interface.submit_preview(structure)
   rescue TTK::ETrade::Errors::OrderWarning => e
     # some warnings are more important than others, but for the most
-    # part we just want to record it happened otherwise it's not an error
+    # part we just want to record it happened otherwise it"s not an error
 
   rescue TTK::ETrade::Errors::OrderError => e
     # any errors thrown by the API should get wrapped and captured here
@@ -136,10 +136,10 @@ class TTK::ETrade::Orders::Containers::NewOneLeg
     JSON
     structure = to_place(@preview)
 
-    pp 'place structure', structure
+    pp "place structure", structure
     @placed = interface.submit_order(structure)
     @placed.order_id
-    # pp 'placed response', @placed
+    # pp "placed response", @placed
     TTK::ETrade::Orders::Containers::Existing.new(body: @placed,
                                                   interface: interface,
                                                   account_key: @account_key)

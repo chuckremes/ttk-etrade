@@ -25,9 +25,9 @@ class TTK::ETrade::Session::Orders::List < TTK::ETrade::Session::Orders::Base
                                    status:       status,
                                    query_params: params })
 
-    array      = result.value.dig('OrdersResponse', 'Order') || []
-    new_marker = result.value.dig('OrdersResponse', 'marker')
-    # p 'new marker', new_marker, 'next', result.value.dig('OrdersResponse', 'next')
+    array      = result.value.dig("OrdersResponse", "Order") || []
+    new_marker = result.value.dig("OrdersResponse", "marker")
+    # p "new marker", new_marker, "next", result.value.dig("OrdersResponse", "next")
     # debug(url, result)
     # binding.pry
     [array, new_marker]

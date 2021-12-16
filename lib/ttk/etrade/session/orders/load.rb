@@ -9,7 +9,7 @@ class TTK::ETrade::Session::Orders::Load < TTK::ETrade::Session::Orders::Base
     result = get(url)
     error_check(result, context: { url: url })
 
-    result.value.dig('OrdersResponse', 'Order', 0) || {}
+    result.value.dig("OrdersResponse", "Order", 0) || {}
   end
 end
 

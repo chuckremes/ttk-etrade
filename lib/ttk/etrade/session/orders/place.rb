@@ -14,7 +14,7 @@ class TTK::ETrade::Session::Orders::Place < TTK::ETrade::Session::Orders::Base
                                    account_key: account_key,
                                    payload: payload })
 
-    result.value.dig('PlaceOrderResponse') || {}
+    result.value.dig("PlaceOrderResponse") || {}
   end
 end
 

@@ -10,11 +10,11 @@ class TTK::ETrade::Core::Balances < TTK::ETrade::Core::Session
   end
 
   def settled_cash
-    body.dig('BalanceResponse', 'Computed', 'settledCashForInvestment') || 0.0
+    body.dig("BalanceResponse", "Computed", "settledCashForInvestment") || 0.0
   end
 
   def available_cash
-    body.dig('BalanceResponse', 'Computed', 'cashAvailableForInvestment') || 0.0
+    body.dig("BalanceResponse", "Computed", "cashAvailableForInvestment") || 0.0
   end
 
   def reserved_to_orders
@@ -22,15 +22,15 @@ class TTK::ETrade::Core::Balances < TTK::ETrade::Core::Session
   end
 
   def margin_buying_power
-    body.dig('BalanceResponse', 'Computed', 'marginBuyingPower') || 0.0
+    body.dig("BalanceResponse", "Computed", "marginBuyingPower") || 0.0
   end
 
   def nav
-    body.dig('BalanceResponse', 'Computed', 'RealTimeValues', 'totalAccountValue') || 0.0
+    body.dig("BalanceResponse", "Computed", "RealTimeValues", "totalAccountValue") || 0.0
   end
 
   def id
-    body.dig('BalanceResponse', 'accountId')
+    body.dig("BalanceResponse", "accountId")
   end
 
   def inspect

@@ -45,11 +45,11 @@ class TTK::ETrade::Config::Login < TTK::ETrade::Config
   end
 
   def fill_structure(hash)
-    contents[:secrets][:consumer_key] = hash.dig('login', 'consumer_key')
-    contents[:secrets][:consumer_secret] = hash.dig('login', 'consumer_secret')
-    contents[:sandbox] = hash.dig('login', 'sandbox')
-    contents[:redirect_url] = hash.dig('login', 'redirect_url') || 'oob'
-    contents[:token_path] = hash.dig('login', 'token_path')
+    contents[:secrets][:consumer_key] = hash.dig("login", "consumer_key")
+    contents[:secrets][:consumer_secret] = hash.dig("login", "consumer_secret")
+    contents[:sandbox] = hash.dig("login", "sandbox")
+    contents[:redirect_url] = hash.dig("login", "redirect_url") || "oob"
+    contents[:token_path] = hash.dig("login", "token_path")
   end
 
   def flatten(contents)

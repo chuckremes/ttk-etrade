@@ -1,4 +1,4 @@
-require 'oj'
+require "oj"
 
 # Vendor-specific configuration classes that know how to transform a
 # relatively flat key/value json file into a richer structure to
@@ -19,7 +19,7 @@ class TTK::ETrade::Config
   end
 
   def vendor
-    'etrade'
+    "etrade"
   end
 
   private

@@ -11,7 +11,7 @@ class TTK::ETrade::Containers::Product
     end
 
     def raw_year
-      @body['expiryYear']
+      @body["expiryYear"]
     end
 
     def month
@@ -19,7 +19,7 @@ class TTK::ETrade::Containers::Product
     end
 
     def raw_month
-      @body['expiryMonth']
+      @body["expiryMonth"]
     end
 
     def day
@@ -27,7 +27,7 @@ class TTK::ETrade::Containers::Product
     end
 
     def raw_day
-      @body['expiryDay']
+      @body["expiryDay"]
     end
 
     def date

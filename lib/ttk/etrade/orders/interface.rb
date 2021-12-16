@@ -1,5 +1,5 @@
-require 'async'
-require 'async/barrier'
+require "async"
+require "async/barrier"
 require "async/limiter/window/sliding"
 
 class TTK::ETrade::Orders::Interface
@@ -26,13 +26,13 @@ class TTK::ETrade::Orders::Interface
 
     # According to ETrade API v0 docs, the Orders APIs can be called
     # at a rate of 2 per second or 7000 per hour. Not sure if it
-    # applies to the v1 API (which this implements) but it's a good
+    # applies to the v1 API (which this implements) but it"s a good
     # baseline.
     @barrier = Async::Barrier.new
     @limiter = Async::Limiter::Window::Sliding.new(8, window: 1, parent: @barrier)
   end
 
-  # necessary? I don't think so since #each calls #list anyway and we don't actually
+  # necessary? I don"t think so since #each calls #list anyway and we don"t actually
   # save these results
   def refresh
     list(nil)
@@ -73,7 +73,7 @@ class TTK::ETrade::Orders::Interface
   end
 
   def each(&blk)
-    # refreshes today's orders and adds in the historical that we
+    # refreshes today"s orders and adds in the historical that we
     # collected at bootstrap time
     (list(nil) + @historical_list).each { |e| yield(e) }
   end
@@ -145,7 +145,7 @@ class TTK::ETrade::Orders::Interface
   def filter(array)
     return array if config.orders.allowed_underlying.empty?
 
-    array #.select { |order| config.orders.allowed_underlying.include?(order['Product']['symbol']) }
+    array #.select { |order| config.orders.allowed_underlying.include?(order["Product"]["symbol"]) }
   end
 
   def bootstrap

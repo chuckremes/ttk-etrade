@@ -1,5 +1,5 @@
-require 'async'
-require 'async/barrier'
+require "async"
+require "async/barrier"
 require "async/limiter/window/sliding"
 
 class TTK::ETrade::Portfolio::Interface
@@ -18,7 +18,7 @@ class TTK::ETrade::Portfolio::Interface
 
     # According to ETrade API v0 docs, the Account APIs can be called
     # at a rate of 2 per second or 7000 per hour. Not sure if it
-    # applies to the v1 API (which this implements) but it's a good
+    # applies to the v1 API (which this implements) but it"s a good
     # baseline.
     @barrier = Async::Barrier.new
     @limiter = Async::Limiter::Window::Sliding.new(8, window: 1, parent: @barrier)

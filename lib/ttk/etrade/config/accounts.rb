@@ -33,11 +33,11 @@ class TTK::ETrade::Config::Accounts < TTK::ETrade::Config
   end
 
   def fill_structure(hash)
-    contents[:allowed_accounts]   = hash.dig('accounts', 'allowed_accounts') || []
-    contents[:primary_account_id] = hash.dig('accounts', 'primary_account_id')
-    contents[:active_only]        = hash.dig('accounts', 'active_only') || true
-    contents[:types]              = hash.dig('accounts', 'types') || []
-    contents[:institution_types]  = hash.dig('accounts', 'institution_types') || []
+    contents[:allowed_accounts]   = hash.dig("accounts", "allowed_accounts") || []
+    contents[:primary_account_id] = hash.dig("accounts", "primary_account_id")
+    contents[:active_only]        = hash.dig("accounts", "active_only") || true
+    contents[:types]              = hash.dig("accounts", "types") || []
+    contents[:institution_types]  = hash.dig("accounts", "institution_types") || []
   end
 
   def flatten(contents)

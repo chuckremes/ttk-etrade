@@ -1,11 +1,11 @@
-require 'forwardable'
+require "forwardable"
 
 # Replaces the original "Container" class. This wraps the output
 # of a OrdersResponse which we get from an established order.
 # These are downloaded via the `orders/#{order_id}` path.
 #
 # Order price and probably term can be changed here. Structure
-# of legs can't be changed once established.
+# of legs can"t be changed once established.
 #
 # When this order is loaded, it uses the body from the OrdersResponse
 # which is the Order + OrderDetail. We should be able to change the
@@ -18,7 +18,7 @@ require 'forwardable'
 # no sense... when loading the order, we should preload it into the NewOrder
 # structure so the changes can be made.
 #
-# Here's the sequence for changing an existing order.
+# Here"s the sequence for changing an existing order.
 # 1. Download order, comes in as OrdersResponse with an Order + OrderDetail payload
 # 2. Wrap into a OrderResponse
 # 3. Put into a Containers::Existing
@@ -88,8 +88,8 @@ class TTK::ETrade::Orders::Containers::Existing
     order_id == other&.order_id
   rescue NoMethodError => e
     binding.pry
-    pp 'failed check in same?', 'other', other
-    pp 'self', self
+    pp "failed check in same?", "other", other
+    pp "self", self
     raise
   end
 
@@ -98,7 +98,7 @@ class TTK::ETrade::Orders::Containers::Existing
   # Approach is to create an internal copy of this order as a
   # New Order and then these methods will operate on it. Then we expose
   # methods to preview and submit this new order. At no point does
-  # this existing order actually change; it's Read Only.
+  # this existing order actually change; it"s Read Only.
   # #########
 
   def limit_price=(value)
@@ -148,7 +148,7 @@ class TTK::ETrade::Orders::Containers::Existing
     @preview = interface.submit_change_preview(structure, order_id: order_id)
   rescue TTK::ETrade::Errors::OrderWarning => e
     # some warnings are more important than others, but for the most
-    # part we just want to record it happened otherwise it's not an error
+    # part we just want to record it happened otherwise it"s not an error
 
     @preview_warning = e
   rescue TTK::ETrade::Errors::OrderError => e
@@ -167,13 +167,13 @@ class TTK::ETrade::Orders::Containers::Existing
   def submit
     structure = find_or_create_new_order.to_place(@preview)
 
-    pp 'place structure', structure
+    pp "place structure", structure
     @placed = interface.submit_order_change(structure, order_id: order_id)
-    puts 'new order id = ' + @placed.order_id.to_s
-    @new_order = nil # now get rid of it, can't use it a second time... is this right?
+    puts "new order id = " + @placed.order_id.to_s
+    @new_order = nil # now get rid of it, can"t use it a second time... is this right?
     # maybe we need to prevent an Existing order from being resubmitted more than once
-    # ... yeah, that's probably better
-    # pp 'placed response', @placed
+    # ... yeah, that"s probably better
+    # pp "placed response", @placed
     self.class.new(body: @placed,
                    interface: interface,
                    account_key: @account_key)
@@ -192,8 +192,8 @@ class TTK::ETrade::Orders::Containers::Existing
 
   def to_cancel
     {
-      'CancelOrderRequest' => {
-        'orderId' => order_id
+      "CancelOrderRequest" => {
+        "orderId" => order_id
       }
     }
   end

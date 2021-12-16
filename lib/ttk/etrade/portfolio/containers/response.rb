@@ -1,4 +1,4 @@
-require 'delegate'
+require "delegate"
 
 #
 # External interface should be in sync across all containers

@@ -1,4 +1,4 @@
-require 'forwardable'
+require "forwardable"
 
 class TTK::ETrade::Core::Product
   extend Forwardable
@@ -14,16 +14,16 @@ class TTK::ETrade::Core::Product
 
   def security_type
     case raw_security_type
-    when 'OPTN' then :equity_option
-    when 'EQ' then :equity
-    when 'INDX' then :equity
+    when "OPTN" then :equity_option
+    when "EQ" then :equity
+    when "INDX" then :equity
     else
       raise "Unknown Product type from #{@body.inspect}, revise list!"
     end
   end
 
   def raw_security_type
-    @body['securityType']
+    @body["securityType"]
   end
 
   def callput
@@ -31,15 +31,15 @@ class TTK::ETrade::Core::Product
   end
 
   def raw_callput
-    @body['callPut']
+    @body["callPut"]
   end
 
   def strike
-    @body['strikePrice'] || 0
+    @body["strikePrice"] || 0
   end
 
   def symbol
-    @body['symbol']
+    @body["symbol"]
   end
 
   def expiration_string
@@ -52,12 +52,12 @@ class TTK::ETrade::Core::Product
 
   def osi
     if equity_option?
-      symbol.ljust(6, '-') +
-        (expiration_date.year % 2000).to_s.rjust(2, '0') +
-        expiration_date.month.to_s.rjust(2, '0') +
-        expiration_date.day.to_s.rjust(2, '0') +
-        (call? ? 'C' : 'P') +
-        strike.to_i.to_s.rjust(5, '0') + ((strike - strike.to_i) * 1000).to_i.to_s.rjust(3, '0')
+      symbol.ljust(6, "-") +
+        (expiration_date.year % 2000).to_s.rjust(2, "0") +
+        expiration_date.month.to_s.rjust(2, "0") +
+        expiration_date.day.to_s.rjust(2, "0") +
+        (call? ? "C" : "P") +
+        strike.to_i.to_s.rjust(5, "0") + ((strike - strike.to_i) * 1000).to_i.to_s.rjust(3, "0")
     else
       symbol
     end
@@ -89,17 +89,17 @@ class TTK::ETrade::Core::Product
 
   def to_product
     h = {
-      'symbol'       => symbol,
-      'securityType' => raw_security_type
+      "symbol"       => symbol,
+      "securityType" => raw_security_type
     }
 
-    if raw_security_type == 'OPTN'
+    if raw_security_type == "OPTN"
       h.merge(
-        'callPut'     => raw_callput,
-        'expiryYear'  => raw_year.to_s,
-        'expiryMonth' => raw_month.to_s.rjust(2, '0'),
-        'expiryDay'   => raw_day.to_s.rjust(2, '0'),
-        'strikePrice' => strike.to_s
+        "callPut"     => raw_callput,
+        "expiryYear"  => raw_year.to_s,
+        "expiryMonth" => raw_month.to_s.rjust(2, "0"),
+        "expiryDay"   => raw_day.to_s.rjust(2, "0"),
+        "strikePrice" => strike.to_s
       )
     else
       h
@@ -110,9 +110,9 @@ class TTK::ETrade::Core::Product
 
   def convert_callput(cp)
     case cp
-    when 'PUT', :put
+    when "PUT", :put
       :put
-    when 'CALL', :call
+    when "CALL", :call
       :call
     else
       nil
@@ -131,7 +131,7 @@ class TTK::ETrade::Core::Product
     end
 
     def raw_year
-      @body['expiryYear']
+      @body["expiryYear"]
     end
 
     def month
@@ -139,7 +139,7 @@ class TTK::ETrade::Core::Product
     end
 
     def raw_month
-      @body['expiryMonth']
+      @body["expiryMonth"]
     end
 
     def day
@@ -147,7 +147,7 @@ class TTK::ETrade::Core::Product
     end
 
     def raw_day
-      @body['expiryDay']
+      @body["expiryDay"]
     end
 
     def date

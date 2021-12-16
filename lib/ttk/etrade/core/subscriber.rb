@@ -1,4 +1,4 @@
-require 'forwardable'
+require "forwardable"
 
 # Included by any class that wants to subscribe for quote updates.
 # This module contains all the methods necessary to receive a

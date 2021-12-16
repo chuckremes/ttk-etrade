@@ -13,7 +13,7 @@ class TTK::ETrade::Session::Orders::PreviewChange < TTK::ETrade::Session::Orders
                                    payload: payload,
                                    order_id: order_id })
 
-    result.value.dig('PreviewOrderResponse') || {}
+    result.value.dig("PreviewOrderResponse") || {}
   end
 end
 
