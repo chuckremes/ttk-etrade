@@ -6,7 +6,7 @@ class TTK::ETrade::Market::Interface
   include Enumerable # used to enumerate output of #list only
 
   def initialize(config:, api_session:)
-    @config      = config
+    @config = config
     @api_session = api_session
 
     # Maintain all of these Session objects here so we have a centralized
@@ -28,9 +28,9 @@ class TTK::ETrade::Market::Interface
   # cancelled, rejected, etc.
   #
   def list(status = nil)
-    array  = []
+    array = []
     marker = nil
-    count  = 0
+    count = 0
 
     begin
       count += 1
@@ -38,14 +38,15 @@ class TTK::ETrade::Market::Interface
       # when we do, then call again and accumulate the response arrays
       response, marker = @list.reload(account_key: @account.key,
                                       marker: marker)
-      array            += response
+      array += response
     end until marker.nil? || count > 100
 
     raise "Holy cow, fetched positions 100 times!!!" if count > 100
 
-    array.map! { |element| TTK::ETrade::Portfolio::Containers::Response::Position.new(body: element) }
-    process_list(array)
-    @list_cache
+    array.map! { |response| TTK::ETrade::Market::Containers::Response::choose_type(response) }
+         .map! do |element|
+      TTK::ETrade::Market::Containers::Quote.choose_type(interface: self, body: element)
+    end
   end
 
   def each(&blk)

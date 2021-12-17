@@ -1,106 +1,66 @@
-require "forwardable"
+# for ComposedMethods
+# temporary until ttk-containers is made into a real gem
+require_relative "../../../../../../ttk-containers/lib/ttk/containers/quotes/quote/shared"
+require 'delegate'
 
-class TTK::ETrade::Containers::Quotes::Quote
-  attr_reader :product, :quote
-  extend Forwardable
-  def_delegators :@product,
-                 :symbol,
-                 :expiration_date,
-                 :expiration_string,
-                 :strike,
-                 :callput,
-                 :call?,
-                 :put?,
-                 :equity?,
-                 :equity_option?,
-                 :osi
+module TTK
+  module ETrade
+    module Containers
+      module Quotes
 
-  def self.make(quote_data)
-    instance = new
-    instance.update_quote(from_hash: quote_data)
-    instance
-  end
+        # The Quote container (and its subclasses Equity and EquityOption) appear to be
+        # superfluous when all they do is delegate everything to the Market::Containers::Response
+        # objects. The reason these classes exist here is so we can pass around references to
+        # the ETrade::Containers::Quotes::Equity and EquityOption containers for permanent storage
+        # in a Position or Order. When receiving new quote data and updating them, we can just
+        # pass in the new Market::Containers::Response object to this container and the values
+        # will update. The original object references remain intact from the perspective of the
+        # Order or Position container.
+        #
+        class Quote < SimpleDelegator
+          UnknownQuoteResponseType = Class.new(StandardError)
 
-  def self.null(product={})
-    make(
-      {
-        "dateTimeUTC" => 0,
-        "quoteStatus" => "DELAYED",
-        "ahFlag"      => "false",
-        "Option"      =>
-          { "ask"               => 0,
-            "askSize"           => 0,
-            "bid"               => 0,
-            "bidSize"           => 0,
-            "daysToExpiration"  => 0,
-            "lastTrade"         => 0,
-            "openInterest"      => 0,
-            "intrinsicValue"    => 0,
-            "timePremium"       => 0,
-            "symbolDescription" => "Null quote",
-            "OptionGreeks"      =>
-              { "rho"          => 0,
-                "vega"         => 0,
-                "theta"        => 0,
-                "delta"        => 0,
-                "gamma"        => 0,
-                "iv"           => 0,
-                "currentValue" => false } },
-        "Product"     =>
-          { "symbol"       => product["symbol"] || "NULLSYMBOL",
-            "securityType" => product["security_type"] || "null",
-            "callPut"      => product["optionType"] || "none",
-            "expiryYear"   => product["expiryYear"] || 0,
-            "expiryMonth"  => product["expiryMonth"] || 0,
-            "expiryDay"    => product["expiryDay"] || 0,
-            "strikePrice"  => product["strikePrice"] || 0 } }
-    )
-  end
+          # Expects an ETrade::Market::Containers::Equity or EquityOption response object. From it
+          # we determine which Quote container to use.
+          #
+          def self.choose_type(response)
+            if response.equity?
+              Equity.new(body: response)
+            elsif response.equity_option?
+              EquityOption.new(body: response)
+            else
+              raise UnknownQuoteResponseType.new(response)
+            end
+          end
 
-  def update_quote(from_quote: nil, from_hash: nil)
-    # special case... when updating a Quote from another Quote
-    # we need to access its internal +quote+ ivar. We make a
-    # duplicate so they can potentially change indpendently.
-    @quote = from_hash.nil? ? from_quote.quote.dup : from_hash
-    @product = TTK::ETrade::Containers::Product.new(@quote["Product"])
-  end
+          def initialize(body:)
+            # Plain #super is wrong because it interprets it as super(body: body) which
+            # ends up passing a hash { body: body } as the argument to SimpleDelegator.
+            # That's wrong.
+            super(body)
+          end
 
-  def quote_timestamp
-    Eastern_TZ.to_local(Time.at(quote["dateTimeUTC"] || 0))
-  end
+          def update_quote(new_body)
+            # Since we are delegating to a parent, we need a way to swap in a new
+            # parent object that is the destination of all delegation. This is how
+            # we update a Quote container to have new quote values. We substitute in
+            # the latest TTK::ETrade::Market::Containers::Equity or EquityOption response
+            # instance.
 
-  def quote_status
-    quote["quoteStatus"].downcase.to_sym
-  end
+            # add sanity checks here maybe?
+            __setobj__(new_body)
+          end
+        end
 
-  def extended_hours?
-    quote["ahFlag"] == "true"
-  end
+        class Equity < Quote
 
-  def ask
-    quote.dig(self.class::KEY, "ask")
-  end
+        end
 
-  def bid
-    quote.dig(self.class::KEY, "bid")
-  end
+        class EquityOption < Quote
 
-  def midpoint
-    if bid > 0 || ask > 0
-      ((bid.to_f + ask.to_f) / 2.0).round(2, half: :down)
-    else
-      # handles case where it"s a non-tradeable index, e.g. VIX
-      last
+        end
+
+      end
     end
   end
-
-  def last
-    quote.dig(self.class::KEY, "lastTrade")
-  end
-
-  def volume
-    quote.dig(self.class::KEY, "totalVolume")
-  end
-
-
 end
