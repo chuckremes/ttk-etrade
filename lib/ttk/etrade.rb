@@ -8,6 +8,8 @@ module TTK
     end
 
     module Containers
+      module Quotes
+      end
     end
 
     module Core
@@ -71,6 +73,9 @@ require_relative "etrade/core/accounts"
 require_relative "etrade/core/account"
 # require_relative "etrade/core/product"
 require_relative "etrade/containers/product/product"
+require_relative "etrade/containers/quotes/quote"
+require_relative "etrade/containers/quotes/equity"
+require_relative "etrade/containers/quotes/equity_option"
 
 require_relative "etrade/session/base"
 require_relative "etrade/session/result"

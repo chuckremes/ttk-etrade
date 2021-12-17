@@ -14,7 +14,7 @@ class TTK::ETrade::Core::Account < TTK::ETrade::Core::Session
     when "CONTRIBUTORY" then :contributory
     when "INDIVIDUAL_K" then :solo_401k
     else
-      STDERR.puts "code (#{code}) == "CONTRIBUTORY" => #{code == "CONTRIBUTORY"}"
+      STDERR.puts "code (#{code}) == 'CONTRIBUTORY' => #{code == 'CONTRIBUTORY'}"
       raise UnknownType.new("code: #{code.inspect}")
     end
   end

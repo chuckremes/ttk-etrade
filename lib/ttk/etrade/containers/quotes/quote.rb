@@ -13,8 +13,7 @@ class TTK::ETrade::Containers::Quotes::Quote
                  :put?,
                  :equity?,
                  :equity_option?,
-                 :osi,
-                 :to_product
+                 :osi
 
   def self.make(quote_data)
     instance = new
@@ -104,35 +103,4 @@ class TTK::ETrade::Containers::Quotes::Quote
   end
 
 
-
-
-
-  class All < TTK::ETrade::Core::Quote
-    KEY = "All"
-
-    def ask_time
-      Eastern_TZ.to_local(Time.strptime(quote.dig(self.class::KEY, "askTime"), "%H:%M:%S %z %m-%d-%Y"))
-    end
-
-    def bid_time
-      Eastern_TZ.to_local(Time.strptime(quote.dig(self.class::KEY, "bidTime"), "%H:%M:%S %z %m-%d-%Y"))
-    end
-
-    def last_Time
-      Eastern_TZ.to_local(Time.at(quote.dig(self.class::KEY, "timeOfLastTrade") || 0))
-    end
-
-    def nice_print
-      separator = " | "
-      puts "QuoteTS".rjust(21).ljust(22) + separator +
-             "Bid".rjust(6).ljust(7) + separator +
-             "Ask".rjust(6).ljust(7) + separator +
-             "Last".rjust(6).ljust(7) + separator
-      now = self.quote_timestamp.strftime("%Y%m%d-%H:%M:%S.%L").rjust(21).ljust(22)
-      b = self.bid.to_s.rjust(6).ljust(7)
-      a = self.ask.to_s.rjust(6).ljust(7)
-      last = self.last.to_s.rjust(6).ljust(7)
-      puts [now, bid, ask, last].join(separator)
-    end
-  end
 end

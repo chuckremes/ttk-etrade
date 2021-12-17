@@ -21,16 +21,20 @@ RSpec.describe TTK::ETrade::Containers::Product do
   let(:month) { 12 }
   let(:day) { 11 }
 
-  subject(:product) { described_class.new(body) }
+  subject(:container) { described_class.new(body) }
+
+  let(:exact_duplicate) { described_class.new(body) }
+
+  let(:different_duplicate) { described_class.new(body.merge("symbol" => "FOO")) }
 
   describe "creation" do
     it "returns a product instance" do
-      expect(product).to be_instance_of(described_class)
+      expect(container).to be_instance_of(described_class)
     end
 
     it "allocates an instance of Expiration" do
       expect(described_class::Expiration).to receive(:new).with(body)
-      product
+      container
     end
 
     include_examples "product interface - required methods", TTK::Containers::Product

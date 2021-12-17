@@ -1,20 +1,23 @@
-require "forwardable"
+class TTK::ETrade::Market::Containers::Response
+
+  def initialize(body:)
+    @body = body
+
+    # OrdersResponse and PlacedOrderResponse are pretty much the same except the
+    # order details key has a different name in each. Accommodate both here.
+    @order = if body.key?("Order")
+               body.dig("Order", 0)
+             elsif body.key?("OrderDetail")
+               body.dig("OrderDetail", 0)
+             else
+               STDERR.puts "Check backtrace to see how we got here"
+               raise "Never get here"
+             end
+  end
+
+end
 
 class TTK::ETrade::Core::Quote
-  attr_reader :product, :quote
-  extend Forwardable
-  def_delegators :@product,
-                 :symbol,
-                 :expiration_date,
-                 :expiration_string,
-                 :strike,
-                 :callput,
-                 :call?,
-                 :put?,
-                 :equity?,
-                 :equity_option?,
-                 :osi,
-                 :to_product
 
   def self.make(quote_data)
     instance = new
@@ -22,39 +25,39 @@ class TTK::ETrade::Core::Quote
     instance
   end
 
-  def self.null(product={})
+  def self.null(product = {})
     make(
       {
         "dateTimeUTC" => 0,
         "quoteStatus" => "DELAYED",
-        "ahFlag"      => "false",
-        "Option"      =>
-          { "ask"               => 0,
-            "askSize"           => 0,
-            "bid"               => 0,
-            "bidSize"           => 0,
-            "daysToExpiration"  => 0,
-            "lastTrade"         => 0,
-            "openInterest"      => 0,
-            "intrinsicValue"    => 0,
-            "timePremium"       => 0,
+        "ahFlag" => "false",
+        "Option" =>
+          { "ask" => 0,
+            "askSize" => 0,
+            "bid" => 0,
+            "bidSize" => 0,
+            "daysToExpiration" => 0,
+            "lastTrade" => 0,
+            "openInterest" => 0,
+            "intrinsicValue" => 0,
+            "timePremium" => 0,
             "symbolDescription" => "Null quote",
-            "OptionGreeks"      =>
-              { "rho"          => 0,
-                "vega"         => 0,
-                "theta"        => 0,
-                "delta"        => 0,
-                "gamma"        => 0,
-                "iv"           => 0,
+            "OptionGreeks" =>
+              { "rho" => 0,
+                "vega" => 0,
+                "theta" => 0,
+                "delta" => 0,
+                "gamma" => 0,
+                "iv" => 0,
                 "currentValue" => false } },
-        "Product"     =>
-          { "symbol"       => product["symbol"] || "NULLSYMBOL",
+        "Product" =>
+          { "symbol" => product["symbol"] || "NULLSYMBOL",
             "securityType" => product["security_type"] || "null",
-            "callPut"      => product["optionType"] || "none",
-            "expiryYear"   => product["expiryYear"] || 0,
-            "expiryMonth"  => product["expiryMonth"] || 0,
-            "expiryDay"    => product["expiryDay"] || 0,
-            "strikePrice"  => product["strikePrice"] || 0 } }
+            "callPut" => product["optionType"] || "none",
+            "expiryYear" => product["expiryYear"] || 0,
+            "expiryMonth" => product["expiryMonth"] || 0,
+            "expiryDay" => product["expiryDay"] || 0,
+            "strikePrice" => product["strikePrice"] || 0 } }
     )
   end
 
@@ -103,7 +106,6 @@ class TTK::ETrade::Core::Quote
     quote.dig(self.class::KEY, "totalVolume")
   end
 
-
   class Intraday < TTK::ETrade::Core::Quote
     KEY = "Intraday"
 
@@ -127,6 +129,7 @@ class TTK::ETrade::Core::Quote
     def dte
       quote.dig(self.class::KEY, "daysToExpiration")
     end
+
     alias_method :days_to_expiration, :dte
 
     def open_interest
@@ -168,6 +171,7 @@ class TTK::ETrade::Core::Quote
     def iv
       quote.dig(self.class::KEY, "OptionGreeks", "iv")
     end
+
     alias_method :implied_volatility, :iv
 
     def nice_print

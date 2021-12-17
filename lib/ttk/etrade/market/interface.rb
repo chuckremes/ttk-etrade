@@ -54,19 +54,19 @@ class TTK::ETrade::Market::Interface
 
   def empty_quote(type)
     case type
-    when :equity then TTK::ETrade::Market::Quote::Intraday.new
-    when :equity_option then TTK::ETrade::Market::Quote::Options.new
+    when :equity then TTK::ETrade::Market::Quote::Equity.new
+    when :equity_option then TTK::ETrade::Market::Quote::EquityOption.new
     end
   end
 
   def equity_quote(symbols)
     quotes = quote(symbols, { detailFlag: "INTRADAY" })
-    wrap(quotes: quotes, klass: TTK::ETrade::Market::Quote::Intraday)
+    wrap(quotes: quotes, klass: TTK::ETrade::Market::Quote::Equity)
   end
 
   def equity_option_quote(symbols)
     quotes = quote(symbols, { detailFlag: "OPTIONS" })
-    wrap(quotes: quotes, klass: TTK::ETrade::Market::Quote::Options)
+    wrap(quotes: quotes, klass: TTK::ETrade::Market::Quote::EquityOption)
   end
 
   def wrap(quotes:, klass:)

@@ -1,7 +1,7 @@
 # Wraps all calls to the ETrade REST API and converts
 # the responses to Session::Result objects.
 #
-class TTK::ETrade::Market::Quote < TTK::ETrade::Session::Base
+class TTK::ETrade::Session::Market::Quote < TTK::ETrade::Session::Base
   MAX_SYMBOLS = 50
   MAX_BOUNDARY = 25
   URL         = "/v1/market/quote/"
