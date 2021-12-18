@@ -28,6 +28,27 @@ RSpec.describe TTK::ETrade::Containers::Quotes::Quote do
   let(:last) { 17.12 }
   let(:volume) { 12 }
 
+  shared_examples 'quote .choose_type failure' do |klass:|
+    describe '.choose_type' do
+      context 'unknown response' do
+        let(:response) do
+          Class.new do
+            def equity?
+              false
+            end
+            def equity_option?
+              false
+            end
+          end.new
+        end
+
+        it 'raises UnknownQuoteResponseType' do
+          expect { klass.choose_type(response) }.to raise_error(described_class::UnknownQuoteResponseType)
+        end
+      end
+    end
+  end
+
   describe TTK::ETrade::Containers::Quotes::Equity do
 
     let(:body) do
@@ -75,6 +96,17 @@ RSpec.describe TTK::ETrade::Containers::Quotes::Quote do
 
     subject(:container) { described_class.new(body: response_instance) }
 
+    describe '.choose_type' do
+      context 'equity response' do
+        it 'creates a Equity container' do
+          expect(described_class).to receive(:new).with(body: response_instance)
+          described_class.choose_type(response_instance)
+        end
+      end
+
+      include_examples 'quote .choose_type failure', klass: described_class
+    end
+
     describe "creation" do
       it "returns a equity quote instance" do
         expect(container).to be_instance_of(described_class)
@@ -102,7 +134,7 @@ RSpec.describe TTK::ETrade::Containers::Quotes::Quote do
     end
   end
 
-  describe TTK::ETrade::Containers::Quotes::Equity do
+  describe TTK::ETrade::Containers::Quotes::EquityOption do
     let(:strike) { 50 }
     let(:callput) { "CALL" }
     let(:security_type) { "OPTN" }
@@ -191,16 +223,28 @@ RSpec.describe TTK::ETrade::Containers::Quotes::Quote do
 
     subject(:container) { described_class.new(body: response_instance) }
 
+    describe '.choose_type' do
+      context 'equity response' do
+        it 'creates a EquityOption container' do
+          expect(described_class).to receive(:new).with(body: response_instance)
+          described_class.choose_type(response_instance)
+        end
+      end
+
+      include_examples 'quote .choose_type failure', klass: described_class
+    end
+
     describe "creation" do
-      it "returns a equity quote instance" do
+      it "returns a EquityOption quote instance" do
         expect(container).to be_instance_of(described_class)
       end
 
-      include_examples "quote interface - required methods equity", TTK::Containers::Quotes::Quote::EquityOption
+      include_examples "quote interface - required methods equity_option", TTK::Containers::Quotes::Quote::EquityOption
     end
 
     describe "basic interface" do
       # quote_timestamp, quote_status, ask, bid, last, and volume must be defined for this to work
+      # also needs the various option vars
       include_examples "quote interface - equity_option methods"
     end
 
