@@ -43,9 +43,9 @@ class TTK::ETrade::Market::Interface
 
     raise "Holy cow, fetched positions 100 times!!!" if count > 100
 
-    array.map! { |response| TTK::ETrade::Market::Containers::Response::choose_type(response) }
-         .map! do |element|
-      TTK::ETrade::Market::Containers::Quote.choose_type(interface: self, body: element)
+    array.map! { |quote_data| TTK::ETrade::Market::Containers::Response.new(body: quote_data) }
+         .map! do |response|
+      TTK::ETrade::Market::Containers::Quote.choose_type(interface: self, body: response)
     end
   end
 

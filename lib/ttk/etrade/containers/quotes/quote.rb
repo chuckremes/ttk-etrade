@@ -1,6 +1,6 @@
 # for ComposedMethods
 # temporary until ttk-containers is made into a real gem
-require_relative "../../../../../../ttk-containers/lib/ttk/containers/quotes/quote/shared"
+require_relative "../../../../../../ttk-containers/lib/ttk/containers/quote/shared"
 require 'delegate'
 
 module TTK

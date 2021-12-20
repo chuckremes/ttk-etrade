@@ -122,7 +122,7 @@ RSpec.describe TTK::ETrade::Containers::Quotes::Quote do
         expect(container).to be_instance_of(described_class)
       end
 
-      include_examples 'quote interface - required methods', TTK::Containers::Quotes::Quote
+      include_examples 'quote interface - required methods', TTK::Containers::Quote
     end
 
     describe 'basic interface' do
@@ -235,7 +235,7 @@ RSpec.describe TTK::ETrade::Containers::Quotes::Quote do
         expect(container).to be_instance_of(described_class)
       end
 
-      include_examples 'quote interface - required methods', TTK::Containers::Quotes::Quote
+      include_examples 'quote interface - required methods', TTK::Containers::Quote
     end
 
     describe 'basic interface' do

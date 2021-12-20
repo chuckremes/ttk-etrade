@@ -1,6 +1,6 @@
 # for ComposedMethods
 # temporary until ttk-containers is made into a real gem
-require_relative "../../../../../../ttk-containers/lib/ttk/containers/quotes/quote/shared"
+require_relative "../../../../../../ttk-containers/lib/ttk/containers/quote/shared"
 
 module TTK
   module ETrade
@@ -42,7 +42,7 @@ module TTK
         #             "strikePrice" => 100.0 } }
         # 
         class Response
-          include TTK::Containers::Quotes::Quote::ComposedMethods
+          include TTK::Containers::Quote::ComposedMethods
           include TTK::Containers::Product::Forward
 
           UnknownMarketQuoteType = Class.new(StandardError)
