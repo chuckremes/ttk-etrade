@@ -24,10 +24,8 @@ module TTK
           # we determine which Quote container to use.
           #
           def self.choose_type(response)
-            if response.equity?
-              Equity.new(body: response)
-            elsif response.equity_option?
-              EquityOption.new(body: response)
+            if response.equity? || response.equity_option?
+              new(body: response)
             else
               raise UnknownQuoteResponseType.new(response)
             end
@@ -50,14 +48,6 @@ module TTK
             # add sanity checks here maybe?
             __setobj__(new_body)
           end
-        end
-
-        class Equity < Quote
-
-        end
-
-        class EquityOption < Quote
-
         end
 
       end

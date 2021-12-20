@@ -42,23 +42,22 @@ module TTK
         #             "strikePrice" => 100.0 } }
         # 
         class Response
-          UnknownMarketQuoteType = Class.new(StandardError)
+          include TTK::Containers::Quotes::Quote::ComposedMethods
+          include TTK::Containers::Product::Forward
 
-          def self.choose_type(body)
-            if body.key?("Intraday")
-              Equity.new(body: body)
-              elsif body.key?("Option")
-              EquityOption.new(body: body)
-            else
-              raise UnknownMarketQuoteType.new(body)
-            end
-          end
+          UnknownMarketQuoteType = Class.new(StandardError)
 
           attr_reader :body, :detail, :product
 
           def initialize(body:)
             @body = body
             @product = ETrade::Containers::Product.new(body.dig("Product"))
+
+            @detail = if body.key?("Intraday")
+                        body.dig("Intraday")
+                      elsif body.key?("Option")
+                        body.dig("Option")
+                      end
           end
 
           def update_quote(*args)
@@ -89,68 +88,59 @@ module TTK
           def volume
             detail.dig("totalVolume")
           end
-        end
-
-        class Equity < Response
-          include TTK::Containers::Quotes::Quote::Equity::ComposedMethods
-          include TTK::Containers::Product::Forward
-
-          def initialize(body:)
-            super
-            @detail = body.dig("Intraday")
-          end
-        end
-
-        class EquityOption < Response
-          include TTK::Containers::Quotes::Quote::EquityOption::ComposedMethods
-          include TTK::Containers::Product::Forward
-
-          def initialize(body:)
-            super
-            @detail = body.dig("Option")
-          end
 
           def dte
+            return 0 unless equity_option?
             detail.dig("daysToExpiration")
           end
 
           def open_interest
+            return 0 unless equity_option?
             detail.dig("openInterest")
           end
 
           def intrinsic
+            return 0.0 unless equity_option?
             detail.dig("intrinsicValue")
           end
 
           def extrinsic
+            return 0.0 unless equity_option?
             detail.dig("timePremium")
           end
 
           def multiplier
+            return 1 unless equity_option?
             detail.dig("optionMultiplier")
           end
 
           def delta
+            return 0.0 unless equity_option?
             detail.dig("OptionGreeks", "delta")
           end
 
           def theta
+            return 0.0 unless equity_option?
             detail.dig("OptionGreeks", "theta")
           end
 
           def gamma
+            return 0.0 unless equity_option?
             detail.dig("OptionGreeks", "gamma")
           end
 
           def vega
+            return 0.0 unless equity_option?
             detail.dig("OptionGreeks", "vega")
           end
 
           def rho
+            return 0.0 unless equity_option?
             detail.dig("OptionGreeks", "rho")
           end
 
           def iv
+            return 0.0 unless equity_option?
             detail.dig("OptionGreeks", "iv")
           end
         end
