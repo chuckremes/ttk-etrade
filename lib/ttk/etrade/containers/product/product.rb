@@ -53,7 +53,7 @@ class TTK::ETrade::Containers::Product
   end
 
   def expiration_date
-    return @expiration.date if equity_option?
+    return @expiration if equity_option?
     NullExpiration
   end
 
