@@ -13,7 +13,8 @@ class TTK::ETrade::Containers::Product
     :raw_month,
     :raw_day
 
-  NULL_EXPIRATION = Struct.new(:year, :month, :day).new(0, 0, 0)
+  # Defined as the EPOCH
+  NULL_EXPIRATION = Struct.new(:year, :month, :day).new(1970, 1, 1)
 
   def initialize(hash)
     @body = hash
