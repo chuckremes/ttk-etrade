@@ -1,0 +1,10 @@
+source 'https://rubygems.org'
+
+gem 'rspec'
+gem 'pry'
+gem 'async', '~>1.3'
+gem 'async-limiter'
+gem 'tzinfo'
+gem 'tzinfo-data'
+gem 'oj'
+gem 'standard'
