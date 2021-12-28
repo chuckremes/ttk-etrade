@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# require "delegate"
 require_relative "../../../../../../ttk-containers/lib/ttk/containers/leg/shared"
 
 #
