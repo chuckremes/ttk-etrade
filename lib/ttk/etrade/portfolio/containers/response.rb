@@ -82,6 +82,9 @@ module TTK
               body['commissions']
             end
 
+            # By definition, a Position is always opening. If it were closing,
+            # it wouldn't be a Position because it would offset an existing one
+            # and net out to zero and therefore not exist.
             def direction
               :opening
             end
@@ -91,13 +94,3 @@ module TTK
     end
   end
 end
-
-# class TTK::ETrade::Portfolio::Containers::Response::Position < SimpleDelegator
-#
-#
-#   def initialize(body:)
-#     @body = body
-#
-#     super(TTK::ETrade::Orders::Containers::PositionLeg.new(@body))
-#   end
-# end
