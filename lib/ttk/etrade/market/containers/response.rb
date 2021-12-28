@@ -6,9 +6,8 @@ module TTK
   module ETrade
     module Market
       module Containers
-
         # Example of an Option quote from ETrade QuoteData payload:
-        # 
+        #
         #       {
         #         "dateTimeUTC" => 0,
         #         "quoteStatus" => "DELAYED",
@@ -40,10 +39,29 @@ module TTK
         #             "expiryMonth" => 12,
         #             "expiryDay" => 17,
         #             "strikePrice" => 100.0 } }
-        # 
+        #
         class Response
           include TTK::Containers::Quote::ComposedMethods
           include TTK::Containers::Product::Forward
+
+          # Used by other containers when a Quote object is required; sets up a nice
+          # empty object
+          def self.null_quote(product:)
+            h = { "dateTimeUTC" => 0, "quoteStatus" => "DELAYED",
+                  "Product" => {},
+                  "Option" => {
+                    "ask" => 0, "bid" => 0, "daysToExpiration" => 0,
+                    "lastTrade" => 0, "openInterest" => 0, "intrinsicValue" => 0,
+                    "timePremium" => 0, "symbolDescription" => "Null quote",
+                    "OptionGreeks" => {}
+                  } }
+            h["Product"].merge!(product)
+            og = { "rho" => 0.001, "vega" => 0.001, "theta" => -0.001,
+                   "delta" => 0.001, "gamma" => 0.001, "iv" => 0.001, "currentValue" => false }
+            og["delta"] = -0.001 if product["callPut"] == "PUT"
+            h['Option']['OptionGreeks'].merge!(og)
+            new(body: h)
+          end
 
           UnknownMarketQuoteType = Class.new(StandardError)
 
@@ -60,9 +78,10 @@ module TTK
                       end
           end
 
-          def update_quote(*args)
+          def update_quote(*)
             # no op since Response bodies never get updated in this container
             # we always allocate new ones
+            nil
           end
 
           def quote_timestamp
@@ -144,7 +163,6 @@ module TTK
             detail.dig("OptionGreeks", "iv")
           end
         end
-
       end
     end
   end

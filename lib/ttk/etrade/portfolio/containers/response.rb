@@ -21,8 +21,8 @@ module TTK
 
             def initialize(body:)
               @body = body
-              @quote = NullQuote
               @product = body['Product']
+              @quote = TTK::ETrade::Market::Containers::Response.null_quote(product: @product)
             end
 
             def side
@@ -43,7 +43,8 @@ module TTK
 
             def order_price
               # not sure what to put here yet
-              nil
+              # may not need this at all... look to remove everywhere
+              0.0
             end
 
             def stop_price
