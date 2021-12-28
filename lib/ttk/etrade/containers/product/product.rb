@@ -4,20 +4,19 @@ require_relative "expiration"
 # temporary until ttk-containers is made into a real gem
 require_relative "../../../../../../ttk-containers/lib/ttk/containers/product/shared"
 
-
 class TTK::ETrade::Containers::Product
   include TTK::Containers::Product::ComposedMethods
 
   extend Forwardable
   def_delegators :@expiration,
-                 :raw_year,
-                 :raw_month,
-                 :raw_day
+    :raw_year,
+    :raw_month,
+    :raw_day
 
-  NullExpiration = Struct.new(:year, :month, :day).new(0, 0, 0)
+  NULL_EXPIRATION = Struct.new(:year, :month, :day).new(0, 0, 0)
 
   def initialize(hash)
-    @body       = hash
+    @body = hash
     @expiration = Expiration.new(hash)
   end
 
@@ -54,29 +53,29 @@ class TTK::ETrade::Containers::Product
 
   def expiration_date
     return @expiration if equity_option?
-    NullExpiration
+    NULL_EXPIRATION
   end
 
   def inspect
-    "#{self.class}: \n" +
-      "                  symbol: #{symbol}\n" +
-      "              expiration: #{expiration_string}\n" +
-      "                 callput: #{callput}\n" +
+    "#{self.class}: \n" \
+      "                  symbol: #{symbol}\n" \
+      "              expiration: #{expiration_string}\n" \
+      "                 callput: #{callput}\n" \
       "                  strike: #{strike}\n"
   end
 
   def to_product
     h = {
-      "symbol"       => symbol,
+      "symbol" => symbol,
       "securityType" => raw_security_type
     }
 
     if equity_option?
       h.merge(
-        "callPut"     => callput.to_s.upcase,
-        "expiryYear"  => raw_year.to_s,
+        "callPut" => callput.to_s.upcase,
+        "expiryYear" => raw_year.to_s,
         "expiryMonth" => raw_month.to_s.rjust(2, "0"),
-        "expiryDay"   => raw_day.to_s.rjust(2, "0"),
+        "expiryDay" => raw_day.to_s.rjust(2, "0"),
         "strikePrice" => strike.to_s
       )
     else
@@ -93,7 +92,7 @@ class TTK::ETrade::Containers::Product
     when "CALL", :call
       :call
     else
-      nil
+      :not_option
     end
   end
 end

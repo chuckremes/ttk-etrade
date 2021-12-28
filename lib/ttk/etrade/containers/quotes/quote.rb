@@ -1,13 +1,12 @@
 # for ComposedMethods
 # temporary until ttk-containers is made into a real gem
 require_relative "../../../../../../ttk-containers/lib/ttk/containers/quote/shared"
-require 'delegate'
+require "delegate"
 
 module TTK
   module ETrade
     module Containers
       module Quotes
-
         # The Quote container (and its subclasses Equity and EquityOption) appear to be
         # superfluous when all they do is delegate everything to the Market::Containers::Response
         # objects. The reason these classes exist here is so we can pass around references to
@@ -49,7 +48,6 @@ module TTK
             __setobj__(new_body)
           end
         end
-
       end
     end
   end

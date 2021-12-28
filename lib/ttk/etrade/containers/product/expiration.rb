@@ -31,7 +31,7 @@ class TTK::ETrade::Containers::Product
     end
 
     def date
-      # If jsut an equity, put expiration into the distant future
+      # If just an equity, put expiration into the distant future
       @date ||= Date.new(year, month, day)
     end
 

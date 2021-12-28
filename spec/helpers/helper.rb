@@ -3,18 +3,18 @@
 module Helper
   # Returns a struct in the form of an ETrade Product payload
   def make_etrade_product(symbol:, security_type:, callput:, year:, month:, day:, strike:)
-    { "symbol" => symbol, "securityType" => security_type, "callPut" => callput,
-      "expiryYear" => year, "expiryMonth" => month, "expiryDay" => day, "strikePrice" => strike}
+    {"symbol" => symbol, "securityType" => security_type, "callPut" => callput,
+     "expiryYear" => year, "expiryMonth" => month, "expiryDay" => day, "strikePrice" => strike}
   end
 
   def make_etrade_equity_product(symbol: "AAPL")
     make_etrade_product(symbol: symbol, security_type: "EQ", callput: "",
-                        year: 0, month: 0, day: 0, strike: 0)
+      year: 0, month: 0, day: 0, strike: 0)
   end
 
   def make_etrade_option_product(symbol: "AAPL", callput: "CALL", year: 2021, month: 12, day: 17, strike: 145.5)
     make_etrade_product(symbol: symbol, security_type: "OPTN", callput: callput, year: year,
-                        month: month, day: day, strike: strike)
+      month: month, day: day, strike: strike)
   end
 
   #       {
@@ -58,14 +58,14 @@ module Helper
          "lastTrade" => 0,
          "totalVolume" => 0},
       "Product" =>
-        {"symbol" => product.fetch('symbol', 'IBM'),
+        {"symbol" => product.fetch("symbol", "IBM"),
          "securityType" => "EQ", "callPut" => "", "expiryYear" => 0,
          "expiryMonth" => 0, "expiryDay" => 0, "strikePrice" => 0}
     }
   end
 
   def make_etrade_option_quote(product: {})
-    h = {
+    {
       "dateTimeUTC" => 0, "quoteStatus" => "DELAYED", "ahFlag" => "false",
       "Option" =>
         {"ask" => 0,
@@ -79,16 +79,14 @@ module Helper
          "OptionGreeks" => {
            "rho" => 0, "vega" => 0, "theta" => 0,
            "delta" => 0, "gamma" => 0, "iv" => 0, "currentValue" => false
-         }
-        },
+         }},
       "Product" =>
-        {"symbol" => product.fetch('symbol', 'IBM'),
-         "securityType" => "OPTN", "callPut" => product.fetch('callPut', 'CALL'),
+        {"symbol" => product.fetch("symbol", "IBM"),
+         "securityType" => "OPTN", "callPut" => product.fetch("callPut", "CALL"),
          "expiryYear" => 0,
          "expiryMonth" => 0, "expiryDay" => 0, "strikePrice" => 0}
     }
     # binding.pry
-    h
   end
 
   def make_equity_product(etrade: nil)

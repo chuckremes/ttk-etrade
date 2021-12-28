@@ -47,19 +47,19 @@ module TTK
           # Used by other containers when a Quote object is required; sets up a nice
           # empty object
           def self.null_quote(product:)
-            h = { "dateTimeUTC" => 0, "quoteStatus" => "DELAYED",
-                  "Product" => {},
-                  "Option" => {
-                    "ask" => 0, "bid" => 0, "daysToExpiration" => 0,
-                    "lastTrade" => 0, "openInterest" => 0, "intrinsicValue" => 0,
-                    "timePremium" => 0, "symbolDescription" => "Null quote",
-                    "OptionGreeks" => {}
-                  } }
+            h = {"dateTimeUTC" => 0, "quoteStatus" => "DELAYED",
+                 "Product" => {},
+                 "Option" => {
+                   "ask" => 0, "bid" => 0, "daysToExpiration" => 0,
+                   "lastTrade" => 0, "openInterest" => 0, "intrinsicValue" => 0,
+                   "timePremium" => 0, "symbolDescription" => "Null quote",
+                   "OptionGreeks" => {}
+                 }}
             h["Product"].merge!(product)
-            og = { "rho" => 0.001, "vega" => 0.001, "theta" => -0.001,
-                   "delta" => 0.001, "gamma" => 0.001, "iv" => 0.001, "currentValue" => false }
+            og = {"rho" => 0.001, "vega" => 0.001, "theta" => -0.001,
+                  "delta" => 0.001, "gamma" => 0.001, "iv" => 0.001, "currentValue" => false}
             og["delta"] = -0.001 if product["callPut"] == "PUT"
-            h['Option']['OptionGreeks'].merge!(og)
+            h["Option"]["OptionGreeks"].merge!(og)
             new(body: h)
           end
 
@@ -72,10 +72,10 @@ module TTK
             @product = ETrade::Containers::Product.new(body.dig("Product"))
 
             @detail = if body.key?("Intraday")
-                        body.dig("Intraday")
-                      elsif body.key?("Option")
-                        body.dig("Option")
-                      end
+              body.dig("Intraday")
+            elsif body.key?("Option")
+              body.dig("Option")
+            end
           end
 
           def update_quote(*)

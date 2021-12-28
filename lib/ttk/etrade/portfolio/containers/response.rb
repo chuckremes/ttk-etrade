@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # require "delegate"
-require_relative '../../../../../../ttk-containers/lib/ttk/containers/leg/shared'
+require_relative "../../../../../../ttk-containers/lib/ttk/containers/leg/shared"
 
 #
 # External interface should be in sync across all containers
@@ -21,12 +21,12 @@ module TTK
 
             def initialize(body:)
               @body = body
-              @product = body['Product']
+              @product = body["Product"]
               @quote = TTK::ETrade::Market::Containers::Response.null_quote(product: @product)
             end
 
             def side
-              body['positionType'].downcase.to_sym
+              body["positionType"].downcase.to_sym
             end
 
             def unfilled_quantity
@@ -34,11 +34,11 @@ module TTK
             end
 
             def filled_quantity
-              body['quantity']
+              body["quantity"]
             end
 
             def execution_price
-              body['pricePaid']
+              body["pricePaid"]
             end
 
             def order_price
@@ -59,7 +59,7 @@ module TTK
               # ETrade gives us this particular date as milliseconds from epoch
               # Also, all ETrade times are Eastern timezone so convert to our
               # local TZ
-              Eastern_TZ.to_local(Time.at((body['dateAcquired'] || 0) / 1000))
+              Eastern_TZ.to_local(Time.at((body["dateAcquired"] || 0) / 1000))
             end
 
             def preview_time
@@ -71,15 +71,15 @@ module TTK
             end
 
             def leg_id
-              body['positionId']
+              body["positionId"]
             end
 
             def fees
-              body['otherFees']
+              body["otherFees"]
             end
 
             def commission
-              body['commissions']
+              body["commissions"]
             end
 
             # By definition, a Position is always opening. If it were closing,
