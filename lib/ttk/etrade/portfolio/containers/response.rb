@@ -20,8 +20,8 @@ module TTK
 
             def initialize(body:)
               @body = body
-              @product = body["Product"]
-              @quote = TTK::ETrade::Market::Containers::Response.null_quote(product: @product)
+              @product = TTK::ETrade::Containers::Product.new(body["Product"])
+              @quote = TTK::ETrade::Market::Containers::Response.null_quote(product: body["Product"])
             end
 
             def side
@@ -33,16 +33,15 @@ module TTK
             end
 
             def filled_quantity
-              body["quantity"]
+              body["quantity"].to_i
             end
 
-            def execution_price
-              body["pricePaid"]
+            def price
+              body["pricePaid"].to_f
             end
 
-            def order_price
-              # not sure what to put here yet
-              # may not need this at all... look to remove everywhere
+            def market_price
+              # need to hook this into the #quote to return current market price
               0.0
             end
 
@@ -74,11 +73,11 @@ module TTK
             end
 
             def fees
-              body["otherFees"]
+              body["otherFees"].to_f
             end
 
             def commission
-              body["commissions"]
+              body["commissions"].to_f
             end
 
             # By definition, a Position is always opening. If it were closing,

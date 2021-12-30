@@ -19,5 +19,15 @@ RSpec.describe TTK::ETrade::Orders::Containers::Response do
   let(:stop_price) { 0.0 }
   let(:order_term) { :day }
 
+
+  describe "creation" do
+    it "returns a order response instance" do
+      expect(container).to be_instance_of(described_class)
+    end
+
+    include_examples "legs interface with required methods", TTK::Containers::Legs::Order
+  end
+
   include_examples "legs interface - basic behavior"
 end
+

@@ -6,7 +6,7 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
   subject(:container) { described_class.new(body: body) }
 
   let(:execution_time) { Time.now.to_i }
-  let(:execution_price) { 1.23 }
+  let(:price) { 1.23 }
   let(:leg_id) { "12345" }
   let(:commissions) { 2.34 }
   let(:fees) { 3.45 }
@@ -18,7 +18,7 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
     {
       "positionId" => leg_id,
       "dateAcquired" => execution_time,
-      "pricePaid" => execution_price,
+      "pricePaid" => price,
       "commissions" => commissions,
       "otherFees" => fees,
       "quantity" => filled_quantity,
@@ -43,7 +43,7 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
         expect(container).to be_instance_of(described_class)
       end
 
-      include_examples "leg interface - required methods", TTK::Containers::Leg
+      include_examples "leg interface with required methods", TTK::Containers::Leg
     end
   end
 
@@ -56,12 +56,12 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
         expect(container).to be_instance_of(described_class)
       end
 
-      include_examples "leg interface - required methods", TTK::Containers::Leg
+      include_examples "leg interface with required methods", TTK::Containers::Leg
     end
 
     context "position leg" do
-      let(:execution_price) { 5.21 }
-      let(:order_price) { 0.0 }
+      let(:price) { 5.21 }
+      let(:market_price) { 0.0 }
       let(:stop_price) { 0.0 }
       let(:now) { Time.now }
       let(:placed_time) { TTK::Containers::Leg::EPOCH }
@@ -106,7 +106,7 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
         include_examples "leg interface - long put greeks"
       end
 
-      include_examples "leg interface - basic behavior"
+      include_examples "leg interface basic position behavior"
     end
   end
 end

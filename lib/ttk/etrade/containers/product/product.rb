@@ -7,14 +7,8 @@ require_relative "../../../../../../ttk-containers/lib/ttk/containers/product/sh
 class TTK::ETrade::Containers::Product
   include TTK::Containers::Product::ComposedMethods
 
-  extend Forwardable
-  def_delegators :@expiration,
-    :raw_year,
-    :raw_month,
-    :raw_day
-
   # Defined as the EPOCH
-  NULL_EXPIRATION = Struct.new(:year, :month, :day).new(1970, 1, 1)
+  NULL_EXPIRATION = Expiration.null
 
   def initialize(hash)
     @body = hash
@@ -40,8 +34,8 @@ class TTK::ETrade::Containers::Product
   end
 
   def strike
-    return @body["strikePrice"] if equity_option?
-    0
+    return @body["strikePrice"].to_f if equity_option?
+    0.0
   end
 
   def symbol

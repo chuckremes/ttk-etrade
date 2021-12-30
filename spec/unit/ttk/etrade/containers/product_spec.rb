@@ -1,15 +1,27 @@
 require_relative "../../../../../../ttk-containers/lib/ttk/containers/rspec/shared_product_spec"
 
 RSpec.describe TTK::ETrade::Containers::Product do
+  def convert_security_type(t)
+    # some shared specs override the #let var, so convert it back here
+    case t
+    when :equity, "EQ"
+      "EQ"
+    when :equity_option, "OPTN"
+      "OPTN"
+    else
+      raise "Unknown security type #{t}"
+    end
+  end
+
   let(:body) do
     {
-      "securityType" => security_type,
+      "securityType" => convert_security_type(security_type),
       "symbol" => symbol,
       "callPut" => callput,
       "strikePrice" => strike,
       "expiryYear" => year,
       "expiryMonth" => month,
-      "expiryDay" => day,
+      "expiryDay" => day
     }
   end
 
@@ -23,9 +35,7 @@ RSpec.describe TTK::ETrade::Containers::Product do
 
   subject(:container) { described_class.new(body) }
 
-  let(:exact_duplicate) { described_class.new(body) }
-
-  let(:different_duplicate) { described_class.new(body.merge("symbol" => "FOO")) }
+  let(:different_container) { described_class.new(body.merge("symbol" => "FOO")) }
 
   describe "creation" do
     it "returns a product instance" do
@@ -37,24 +47,24 @@ RSpec.describe TTK::ETrade::Containers::Product do
       container
     end
 
-    include_examples "product interface - required methods", TTK::Containers::Product
+    include_examples "product interface with required methods", TTK::Containers::Product
   end
 
   describe "call option" do
     let(:callput) { "CALL" }
 
-    include_examples "product interface - call"
+    include_examples "product interface with basic call option behaviors"
   end
 
   describe "put option" do
     let(:callput) { "PUT" }
 
-    include_examples "product interface - put"
+    include_examples "product interface with basic put option behaviors"
   end
 
   describe "equity" do
     let(:security_type) { "EQ" }
 
-    include_examples "product interface - equity"
+    include_examples "product interface with basic equity instrument behaviors"
   end
 end

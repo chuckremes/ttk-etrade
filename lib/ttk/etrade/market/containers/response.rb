@@ -93,74 +93,74 @@ module TTK
           end
 
           def ask
-            detail.dig("ask")
+            detail.dig("ask").to_f
           end
 
           def bid
-            detail.dig("bid")
+            detail.dig("bid").to_f
           end
 
           def last
-            detail.dig("lastTrade")
+            detail.dig("lastTrade").to_f
           end
 
           def volume
-            detail.dig("totalVolume")
+            detail.dig("totalVolume").to_i
           end
 
           def dte
             return 0 unless equity_option?
-            detail.dig("daysToExpiration")
+            detail.dig("daysToExpiration").to_i
           end
 
           def open_interest
             return 0 unless equity_option?
-            detail.dig("openInterest")
+            detail.dig("openInterest").to_i
           end
 
           def intrinsic
             return 0.0 unless equity_option?
-            detail.dig("intrinsicValue")
+            detail.dig("intrinsicValue").to_f
           end
 
           def extrinsic
             return 0.0 unless equity_option?
-            detail.dig("timePremium")
+            detail.dig("timePremium").to_f
           end
 
           def multiplier
-            return 1 unless equity_option?
-            detail.dig("optionMultiplier")
+            return 1.0 unless equity_option?
+            detail.dig("optionMultiplier").to_f
           end
 
           def delta
             return 0.0 unless equity_option?
-            detail.dig("OptionGreeks", "delta")
+            detail.dig("OptionGreeks", "delta").to_f
           end
 
           def theta
             return 0.0 unless equity_option?
-            detail.dig("OptionGreeks", "theta")
+            detail.dig("OptionGreeks", "theta").to_f
           end
 
           def gamma
             return 0.0 unless equity_option?
-            detail.dig("OptionGreeks", "gamma")
+            detail.dig("OptionGreeks", "gamma").to_f
           end
 
           def vega
             return 0.0 unless equity_option?
-            detail.dig("OptionGreeks", "vega")
+            detail.dig("OptionGreeks", "vega").to_f
           end
 
           def rho
             return 0.0 unless equity_option?
-            detail.dig("OptionGreeks", "rho")
+            detail.dig("OptionGreeks", "rho").to_f
           end
 
           def iv
             return 0.0 unless equity_option?
-            detail.dig("OptionGreeks", "iv")
+            detail.dig("OptionGreeks", "iv").to_f
           end
         end
       end
