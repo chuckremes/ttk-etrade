@@ -87,6 +87,7 @@ require_relative "etrade/session/orders/place_change"
 require_relative "etrade/session/orders/list"
 require_relative "etrade/session/orders/load"
 require_relative "etrade/session/portfolio/list"
+require_relative "etrade/session/market/quote"
 
 require_relative "etrade/market/chain"
 require_relative "etrade/market/option_expirations"
@@ -103,3 +104,4 @@ require_relative "etrade/portfolio/containers/response"
 
 require_relative "etrade/orders/interface"
 require_relative "etrade/portfolio/interface"
+require_relative "etrade/market/interface"
