@@ -77,13 +77,13 @@ class TTK::ETrade::Core::Account < TTK::ETrade::Core::Session
     super
   end
 
-  def inspect
-    "#{self.class}: id: #{id}, key: #{key}, name: #{name}, type: #{type}, institution_type: #{institution_type}, active?: #{active?}\n" +
-      balances.inspect + "\n" +
-      positions.inspect + "\n" +
-      orders.list.inspect
-    # orders.inspect
-  end
+  # def inspect
+  #   "#{self.class}: id: #{id}, key: #{key}, name: #{name}, type: #{type}, institution_type: #{institution_type}, active?: #{active?}\n" +
+  #     balances.inspect + "\n" +
+  #     positions.inspect + "\n" +
+  #     orders.list.inspect
+  #   # orders.inspect
+  # end
 
   private
 

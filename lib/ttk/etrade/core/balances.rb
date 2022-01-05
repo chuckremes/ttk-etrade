@@ -33,15 +33,15 @@ class TTK::ETrade::Core::Balances < TTK::ETrade::Core::Session
     body.dig("BalanceResponse", "accountId")
   end
 
-  def inspect
-    "Balances(#{self.class}): {\n" +
-      "                   id: #{id}\n" +
-      "       available_cash: #{available_cash}\n" +
-      "         settled_cash: #{settled_cash}\n" +
-      "   reserved_to_orders: #{reserved_to_orders}\n" +
-      "  margin_buying_power: #{margin_buying_power} \n" +
-      "                  nav: #{nav}\n"
-  end
+  # def inspect
+  #   "Balances(#{self.class}): {\n" +
+  #     "                   id: #{id}\n" +
+  #     "       available_cash: #{available_cash}\n" +
+  #     "         settled_cash: #{settled_cash}\n" +
+  #     "   reserved_to_orders: #{reserved_to_orders}\n" +
+  #     "  margin_buying_power: #{margin_buying_power} \n" +
+  #     "                  nav: #{nav}\n"
+  # end
 
   def reload(session_ref = api_session)
     result = get(@url, query_params: @params)

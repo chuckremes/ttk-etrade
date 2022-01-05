@@ -45,30 +45,15 @@ class TTK::ETrade::Orders::Interface
   # cancelled, rejected, etc.
   #
   def list(status = nil, start_date: Date.today, end_date: Date.today)
-    array  = []
-    elapsed("ELAPSED list(#{status})") do
-      marker = nil
-      count  = 0
-
-      begin
-        count += 1
-        # only fetches 25 orders at a time, so we may get a marker back
-        # when we do, then call again and accumulate the response arrays
-        response, marker = @list_orders.reload(account_key: @account.key,
-                                               start_date:  start_date,
-                                               end_date:    end_date,
-                                               marker:      marker,
-                                               status:      status)
-        array            += response
-      end until marker.nil? || count > 100
-
-      raise "Holy cow, fetched orders 100 times!!!" if count > 100
+    array = @list_orders.reload(account_key: @account.key,
+                                start_date: start_date,
+                                end_date: end_date,
+                                status: status)
 
       array.map! { |order_response| TTK::ETrade::Orders::Containers::Response::Existing.new(body: order_response) }
       array = filter(array).map do |element|
         TTK::ETrade::Orders::Containers::Existing.new(interface: self, body: element, account_key: @account.key)
       end
-    end
     array
   end
 

@@ -51,13 +51,13 @@ class TTK::ETrade::Containers::Product
     NULL_EXPIRATION
   end
 
-  def inspect
-    "#{self.class}: \n" \
-      "                  symbol: #{symbol}\n" \
-      "              expiration: #{expiration_string}\n" \
-      "                 callput: #{callput}\n" \
-      "                  strike: #{strike}\n"
-  end
+  # def inspect
+  #   "#{self.class}: \n" \
+  #     "                  symbol: #{symbol}\n" \
+  #     "              expiration: #{expiration_string}\n" \
+  #     "                 callput: #{callput}\n" \
+  #     "                  strike: #{strike}\n"
+  # end
 
   def to_product
     h = {

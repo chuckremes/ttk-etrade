@@ -36,20 +36,7 @@ class TTK::ETrade::Portfolio::Interface
   # cancelled, rejected, etc.
   #
   def list(status = nil)
-    array  = []
-    marker = nil
-    count  = 0
-
-    begin
-      count += 1
-      # only fetches 25 orders at a time, so we may get a marker back
-      # when we do, then call again and accumulate the response arrays
-      response, marker = @list.reload(account_key: @account.key,
-                                      marker: marker)
-      array            += response
-    end until marker.nil? || count > 100
-
-    raise "Holy cow, fetched positions 100 times!!!" if count > 100
+    array = @list.reload(account_key: @account.key)
 
     array.map! { |element| TTK::ETrade::Portfolio::Containers::Response::Position.new(body: element) }
     process_list(array)

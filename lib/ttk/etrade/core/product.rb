@@ -63,13 +63,13 @@ class TTK::ETrade::Core::Product
     end
   end
 
-  def inspect
-    "#{self.class}: \n" +
-      "                  symbol: #{symbol}\n" +
-      "              expiration: #{expiration_string}\n" +
-      "                 callput: #{callput}\n" +
-      "                  strike: #{strike}\n"
-  end
+  # def inspect
+  #   "#{self.class}: \n" +
+  #     "                  symbol: #{symbol}\n" +
+  #     "              expiration: #{expiration_string}\n" +
+  #     "                 callput: #{callput}\n" +
+  #     "                  strike: #{strike}\n"
+  # end
 
   def call?
     :call == callput

@@ -46,9 +46,9 @@ class TTK::ETrade::Core::Accounts < TTK::ETrade::Core::Session
     end
   end
 
-  def inspect
-    "#{self.class}: accounts.count [#{accounts.size}], primary: [#{primary}]"
-  end
+  # def inspect
+  #   "#{self.class}: accounts.count [#{accounts.size}], primary: [#{primary}]"
+  # end
 
   private
 
