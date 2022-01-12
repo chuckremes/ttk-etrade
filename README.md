@@ -26,6 +26,13 @@ ETrade REST API v1 (circa 2018) has the following rate limits per their support 
 
 They note that Options Chains use the Markets module so downloading lots of chains repeatedly can rapidly consume the quota. Each OptionPair associated with a strike in an option chain is considered as 2 quote requests. So downloading a chain with 50 strikes for CallPut will consume 100 quote requests for that hour. Downloading many chains repeatedly can rapidly consume the whole 140k hourly limit.
 
+It is best to download the chains once and cache them. 
+In this system, the `OptionPair` is converted to an
+internal `Quote` type so they can be easily updated. 
+So it downloads chains once and then registers its 
+constituent options for market data subscription and 
+updates them in-place.
+
 # Plans
 
 1. Make it work
@@ -33,7 +40,6 @@ They note that Options Chains use the Markets module so downloading lots of chai
 3. Make it fast
 
 Still in phase #1 where I'm making it work. When I get to "make it right" then there will be additional refactors and lots of unit and integration tests. This code needs to be trustworhty. While it currently works, it needs tests to make sure it continues to work.
-
 
 # Notes
 
