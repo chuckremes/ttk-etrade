@@ -24,7 +24,8 @@ module TTK
         #
         def option_expirations(symbol)
           unless @expirations_map[symbol]
-            expirations_session = TTK::ETrade::Session::OptionExpirations.new(api_session: api_session)
+            expirations_session = TTK::ETrade::Session::OptionExpirations.new(api_session: api_session,
+              limiter: @limiter, barrier: @barrier)
             array               = expirations_session.reload(symbol)
 
             @expirations_map[symbol] = TTK::ETrade::Market::OptionExpirations.new.update(from_array: array)
@@ -37,7 +38,8 @@ module TTK
         #
         def option_chains(symbol, expirations)
           unless @chains_map[symbol]
-            chain_session = TTK::ETrade::Session::OptionChains.new(api_session: api_session)
+            chain_session = TTK::ETrade::Session::OptionChains.new(api_session: api_session,
+              limiter: @limiter, barrier: @barrier)
 
             # non-async way
             # @chains_map[symbol] = expirations.inject([]) do |memo, expiration|

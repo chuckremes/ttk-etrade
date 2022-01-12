@@ -48,8 +48,11 @@ end
 #gems
 #
 require "tzinfo"
-Eastern_TZ = TZInfo::Timezone.get("US/Eastern")
-Central_TZ = TZInfo::Timezone.get("US/Central")
+
+module TTK
+  Eastern_TZ ||= TZInfo::Timezone.get("US/Eastern")
+  Central_TZ ||= TZInfo::Timezone.get("US/Central")
+end
 
 # local files
 require_relative "etrade/config/config"

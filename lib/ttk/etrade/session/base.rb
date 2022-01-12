@@ -3,8 +3,10 @@
 # the responses to Session::Result objects.
 #
 class TTK::ETrade::Session::Base
-  def initialize(api_session:)
+  def initialize(api_session:, limiter: nil, barrier: nil)
     @api_session = api_session
+    @limiter = limiter
+    @barrier = nil
     @cache = []
   end
 
@@ -28,7 +30,30 @@ class TTK::ETrade::Session::Base
     raise TTK::ETrade::Errors::Errors[code].new(code: code, message: message, context: context)
   end
 
+  def async_limiter(text:)
+    STDERR.puts text
+    return yield unless @limiter
+
+    @limiter.async do
+      yield
+    end
+  end
+
+  def wait
+    yield
+    @barrier&.wait
+  end
+
   private
 
   attr_reader :api_session
+
+
+  def elapsed(d)
+    start = Time.now
+    yield
+    e = Time.now
+    elap = (e - start).round(1)
+    puts "#{d} took [#{elap}] seconds to run"
+  end
 end
