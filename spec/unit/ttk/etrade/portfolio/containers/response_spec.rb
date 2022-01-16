@@ -65,7 +65,7 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
       let(:stop_price) { 0.0 }
       let(:now) { Time.now }
       let(:placed_time) { TTK::Containers::Leg::EPOCH }
-      let(:execution_time) { Time.new(now.year, now.month, now.day, 0, 0, 0, Eastern_TZ).to_i * 1000 }
+      let(:execution_time) { Time.new(now.year, now.month, now.day, 0, 0, 0, TTK::Eastern_TZ).to_i * 1000 }
       let(:preview_time) { TTK::Containers::Leg::EPOCH }
       let(:direction) { :opening }
       let(:quote) { container.quote }

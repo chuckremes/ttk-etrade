@@ -60,22 +60,7 @@ class TTK::ETrade::Containers::Product
   # end
 
   def to_product
-    h = {
-      "symbol" => symbol,
-      "securityType" => raw_security_type
-    }
-
-    if equity_option?
-      h.merge(
-        "callPut" => callput.to_s.upcase,
-        "expiryYear" => raw_year.to_s,
-        "expiryMonth" => raw_month.to_s.rjust(2, "0"),
-        "expiryDay" => raw_day.to_s.rjust(2, "0"),
-        "strikePrice" => strike.to_s
-      )
-    else
-      h
-    end
+    @body.dup
   end
 
   private

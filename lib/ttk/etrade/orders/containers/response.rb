@@ -33,37 +33,44 @@ module TTK
           end
 
           def legs
-            @legs ||= TTK::ETrade::Orders::Containers::Legs.from_instrument(order.dig("Instrument"), order: order)
-          end
-
-          def order_type
-            case body["orderType"]
-            when "SPREADS" then :spread
-            when "OPTN" then :option
-            when "EQ" then :equity
-            else
-              :unassigned
+            # @legs ||= TTK::ETrade::Orders::Containers::Legs.from_instrument(order.dig("Instrument"), order: order)
+            @legs ||= order.dig("Instrument").map do |leg|
+              Instrument.new(body: leg,
+                placed_time: order.dig("placedTime"),
+                execution_time: order.dig("executedTime"),
+                preview_time: order.dig("previewTime"),
+                leg_status: order.dig("status"))
             end
           end
+
+          # def order_type
+          #   case body["orderType"]
+          #   when "SPREADS" then :spread
+          #   when "OPTN" then :option
+          #   when "EQ" then :equity
+          #   else
+          #     :unassigned
+          #   end
+          # end
 
           def total_order_value
             body.dig("totalOrderValue")
           end
 
-          def preview_time
-            Eastern_TZ.to_local(Time.at((order["previewTime"] || 0) / 1000))
-          end
-
-          def placed_time
-            Eastern_TZ.to_local(Time.at((order["placedTime"] || 0) / 1000))
-          end
-
-          def execution_time
-            # ETrade gives us this particular date as milliseconds from epoch
-            # Also, all ETrade times are Eastern timezone so convert to our
-            # local TZ
-            Eastern_TZ.to_local(Time.at((order["executedTime"] || 0) / 1000))
-          end
+          # def preview_time
+          #   Eastern_TZ.to_local(Time.at((order["previewTime"] || 0) / 1000))
+          # end
+          #
+          # def placed_time
+          #   Eastern_TZ.to_local(Time.at((order["placedTime"] || 0) / 1000))
+          # end
+          #
+          # def execution_time
+          #   # ETrade gives us this particular date as milliseconds from epoch
+          #   # Also, all ETrade times are Eastern timezone so convert to our
+          #   # local TZ
+          #   Eastern_TZ.to_local(Time.at((order["executedTime"] || 0) / 1000))
+          # end
 
           def dst_flag
             body.dig("dstFlag")
@@ -109,6 +116,7 @@ module TTK
           def limit_price
             order.dig("limitPrice")
           end
+
           alias_method(:price, :limit_price)
 
           def stop_price
@@ -169,6 +177,31 @@ module TTK
 
             def non_marginable
               OrderBuyPowerEffect.new(body.dig("nonMarginable"))
+            end
+
+            def to_place
+              {
+                "PlaceOrderRequest" => {
+                  "orderType"     => order_type,
+                  "clientOrderId" => client_order_id,
+                  "PreviewIds" => [
+                    {
+                      "previewId" => preview_id
+                    }
+                  ],
+                  "Order"         => [
+                    {
+                      "allOrNone"     => all_or_none,
+                      "priceType"     => price_type,
+                      "limitPrice"    => limit_price.round(2).to_s,
+                      "stopPrice"     => stop_price.round(2).to_s,
+                      "orderTerm"     => order_term,
+                      "marketSession" => market_session,
+                      "Instrument"    => legs.to_instrument
+                    }
+                  ]
+                }
+              }
             end
 
             class OrderBuyPowerEffect
@@ -255,7 +288,7 @@ module TTK
               @quote = TTK::ETrade::Market::Containers::Response.null_quote(product: body["Product"])
               @placed_time = placed_time || TTK::Containers::Leg::EPOCH
               @execution_time = execution_time || TTK::Containers::Leg::EPOCH
-              @preview_time = @preview_time || TTK::Containers::Leg::EPOCH
+              @preview_time = preview_time || TTK::Containers::Leg::EPOCH
               @leg_status = leg_status
             end
 

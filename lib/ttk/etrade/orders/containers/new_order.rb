@@ -1,5 +1,6 @@
 require_relative "generators"
 require "forwardable"
+require_relative "../../../../../../ttk-containers/lib/ttk/containers/legs/shared"
 
 # Used when specifying the contents of a new order. Subclasses
 # handle specialty types like equity, equity_option, and spread.
@@ -14,8 +15,9 @@ require "forwardable"
 # order here too or do elsewhere?
 #
 class TTK::ETrade::Orders::Containers::NewOneLeg
-  include TTK::ETrade::Orders::Containers::ContainerShared
-  include TTK::ETrade::Orders::Containers::ContainerGreeks
+  include TTK::Containers::Legs::Order::ComposedMethods
+  # include TTK::ETrade::Orders::Containers::ContainerShared
+  # include TTK::ETrade::Orders::Containers::ContainerGreeks
 
   extend Forwardable
   def_delegators :@legs,

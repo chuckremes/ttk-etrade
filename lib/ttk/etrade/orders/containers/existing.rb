@@ -1,4 +1,5 @@
 require "forwardable"
+require_relative "../../../../../../ttk-containers/lib/ttk/containers/legs/shared"
 
 # Replaces the original "Container" class. This wraps the output
 # of a OrdersResponse which we get from an established order.
@@ -34,8 +35,9 @@ require "forwardable"
 #    new Existing order.
 #
 class TTK::ETrade::Orders::Containers::Existing
-  include TTK::ETrade::Orders::Containers::ContainerShared
-  include TTK::ETrade::Orders::Containers::ContainerGreeks
+  include TTK::Containers::Legs::Order::ComposedMethods
+  # include TTK::ETrade::Orders::Containers::ContainerShared
+  # include TTK::ETrade::Orders::Containers::ContainerGreeks
   extend Forwardable
   def_delegators :@body,
                  :order_id,

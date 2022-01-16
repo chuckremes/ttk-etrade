@@ -1,5 +1,7 @@
 require "forwardable"
 require_relative "shared"
+require_relative "../../../../../../ttk-containers/lib/ttk/containers/legs/shared"
+require_relative "../../../../../../ttk-containers/lib/ttk/containers/leg/shared"
 
 # These classes all work together. The Container classes use
 # these helpers to collect the information on an order and then
@@ -269,39 +271,37 @@ module TTK::ETrade::Orders::Containers::Generators
   end
 
   class TTK::ETrade::Orders::Containers::Generators::Leg
-    include TTK::ETrade::Orders::Containers::LegShared
-    extend Forwardable
-    def_delegators :@quote,
-                   :product,
-                   :symbol,
-                   :expiration_date,
-                   :expiration_string,
-                   :strike,
-                   :callput,
-                   :call?,
-                   :put?,
-                   :equity?,
-                   :equity_option?,
-                   :osi,
-                   :iv,
-                   :bid,
-                   :ask,
-                   :midpoint,
-                   :gamma,
-                   :theta,
-                   :rho
-    include TTK::ETrade::Core::Quotes::Subscriber
-    include TTK::ETrade::Orders::Containers::LegGreeks
+    include TTK::Containers::Quote::Forward
+    include TTK::Containers::Product::Forward
+    include TTK::Containers::Leg::ComposedMethods
+    # include TTK::ETrade::Orders::Containers::LegShared
+    # extend Forwardable
+    # def_delegators :@quote,
+    #                :product,
+    #                :symbol,
+    #                :expiration_date,
+    #                :expiration_string,
+    #                :strike,
+    #                :callput,
+    #                :call?,
+    #                :put?,
+    #                :equity?,
+    #                :equity_option?,
+    #                :osi,
+    #                :iv,
+    #                :bid,
+    #                :ask,
+    #                :midpoint,
+    #                :gamma,
+    #                :theta,
+    #                :rho
+    # include TTK::ETrade::Core::Quotes::Subscriber
+    # include TTK::ETrade::Orders::Containers::LegGreeks
 
     def initialize(quote:, quantity:, action:)
       self.quantity = quantity
       self.action   = action
       self.quote    = quote
-    end
-
-    def update_quote(from_quote:)
-      # binding.pry
-      super
     end
 
     def to_instrument
@@ -353,6 +353,17 @@ module TTK::ETrade::Orders::Containers::Generators
 
     def action
       @action
+    end
+
+    def side
+      if action =~ /sell/i
+        :short
+      elsif action =~ /buy/i
+        :long
+      else
+        binding.pry
+        raise "should never get here"
+      end
     end
 
     def quote=(value)
