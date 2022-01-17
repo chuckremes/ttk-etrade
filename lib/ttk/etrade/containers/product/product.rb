@@ -46,7 +46,7 @@ class TTK::ETrade::Containers::Product
     @expiration.iso8601
   end
 
-  def expiration_date
+  def expiration
     return @expiration if equity_option?
     NULL_EXPIRATION
   end

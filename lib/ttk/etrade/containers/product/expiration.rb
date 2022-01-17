@@ -2,6 +2,8 @@ class TTK::ETrade::Containers::Product
   class Expiration
     include Comparable
 
+    # Allocates an Expiration suitable for an Equity which has no
+    #
     def self.null
       new(
         {
@@ -44,7 +46,6 @@ class TTK::ETrade::Containers::Product
     end
 
     def date
-      # If just an equity, put expiration into the distant future
       @date ||= Date.new(year, month, day)
     end
 
