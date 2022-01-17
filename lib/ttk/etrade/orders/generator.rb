@@ -10,6 +10,14 @@ module TTK
         TO_CLOSE = "CLOSE"
         TO_OPEN = "OPEN"
 
+        def self.cancel(order_id)
+          {
+            "CancelOrderRequest" => {
+              "orderId" => order_id
+            }
+          }
+        end
+
         def self.preview_vertical(attributes:)
           {
             "PreviewOrderRequest" => {

@@ -54,9 +54,9 @@ module TTK
             status: status)
 
           array.map! { |order_response| TTK::ETrade::Orders::Containers::Response::Existing.new(body: order_response) }
-          array = filter(array).map do |element|
-            TTK::ETrade::Orders::Containers::Existing.new(interface: self, body: element, account_key: @account.key)
-          end
+          array = filter(array)#.map do |element|
+            # TTK::ETrade::Orders::Containers::Existing.new(interface: self, body: element, account_key: @account.key)
+          # end
           array
         end
 
@@ -67,11 +67,11 @@ module TTK
         end
 
         def new_vertical_spread(body_leg:, wing_leg:)
-          container = TTK::ETrade::Orders::Containers::NewTwoLeg.new(interface: self)
-          container.set_legs(body_leg: body_leg,
-            wing_leg: wing_leg)
-          container.set_defaults
-          container
+          # container = TTK::ETrade::Orders::Containers::NewTwoLeg.new(interface: self)
+          # container.set_legs(body_leg: body_leg,
+          #   wing_leg: wing_leg)
+          # container.set_defaults
+          # container
         end
 
         # Takes the +attributes+, +body+, and +wing+ arguments, converts them into
@@ -108,6 +108,12 @@ module TTK
         def submit_order_change(payload, order_id:)
           result = @place_change.submit(payload: payload, account_key: @account.key, order_id: order_id)
           TTK::ETrade::Orders::Containers::Response::Placed.new(body: result)
+        end
+
+        def cancel(order:, reason:)
+          STDERR.puts "Cancelling #{order.order_id} for reason [#{reason}]"
+          payload = Orders::Generator.cancel(order.order_id)
+          cancel_order(payload: payload, account_key: @account.key)
         end
 
         # How to print out #list details?

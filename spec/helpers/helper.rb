@@ -90,7 +90,7 @@ module Helper
   end
 
   def make_etrade_orders_response(market_session: :regular, all_or_none: true, price_type: :credit,
-    limit_price: 0.0, stop_price: 0.0, order_term: :day)
+    limit_price: 0.0, stop_price: 0.0, order_term: :day, order_id: rand(999_999))
     market_session = case market_session
                      when :regular then "REGULAR"
                      when :extended then "EXTENDED"
@@ -106,9 +106,9 @@ module Helper
                  when :day then "GOOD_FOR_DAY"
                  when :gtc then "GOOD_UNTIL_CANCEL"
     end
-    {"orderId" => 3537,
+    {"orderId" => order_id,
      "details" =>
-        "https://api.etrade.com/v1/accounts/m2moDkzv9luKvq-AXpWGMA/orders/3537",
+        "https://api.etrade.com/v1/accounts/m2moDkzv9luKvq-AXpWGMA/orders/#{order_id}",
      "orderType" => "SPREADS",
      "OrderDetail" =>
         [{"placedTime" => 1635431118673,
