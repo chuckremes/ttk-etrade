@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rspec'
-gem 'pry'
+gem 'pry', '~>0.13.0'
 gem 'async', '~>1.3'
 gem 'async-limiter'
 gem 'tzinfo'
