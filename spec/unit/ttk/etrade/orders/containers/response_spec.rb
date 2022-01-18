@@ -3,7 +3,7 @@ require_relative "../../../../../../../ttk-containers/lib/ttk/containers/rspec/s
 require_relative "../../../../../../../ttk-containers/lib/ttk/containers/rspec/shared_legs_spec"
 
 RSpec.describe TTK::ETrade::Orders::Containers::Response::Existing do
-  subject(:container) { described_class.new(body: body) }
+  subject(:container) { described_class.new(body: body, quotes: quotes) }
 
   let(:body) do
     # all of these variables are overridden by the shared example at various points
@@ -19,6 +19,12 @@ RSpec.describe TTK::ETrade::Orders::Containers::Response::Existing do
   let(:stop_price) { 0.0 }
   let(:order_term) { :day }
   let(:order_id) { rand(999_999) }
+  let(:quotes) { double("quotes") }
+  let(:quote) { make_default_equity_option_quote }
+
+  before do
+    allow(quotes).to receive(:subscribe).and_return(quote)
+  end
 
   describe "creation" do
     it "returns a order response instance" do

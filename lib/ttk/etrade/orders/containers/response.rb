@@ -17,8 +17,9 @@ module TTK
         class Response
           include TTK::Containers::Legs::Order::ComposedMethods
 
-          def initialize(body:)
+          def initialize(body:, quotes:)
             @body = body
+            @quotes = quotes # injected just so we can subscribe to symbols as we receive them
 
             # OrdersResponse and PlacedOrderResponse are pretty much the same except the
             # order details key has a different name in each. Accommodate both here.
@@ -39,7 +40,8 @@ module TTK
                 placed_time: order.dig("placedTime"),
                 execution_time: order.dig("executedTime"),
                 preview_time: order.dig("previewTime"),
-                leg_status: order.dig("status"))
+                leg_status: order.dig("status"),
+                quotes: @quotes)
             end
           end
 
@@ -282,10 +284,12 @@ module TTK
 
             attr_reader :body, :product, :quote
 
-            def initialize(body:, placed_time:, execution_time:, preview_time:, leg_status:)
+            def initialize(body:, placed_time:, execution_time:, preview_time:, leg_status:, quotes:)
               @body = body
               @product = TTK::ETrade::Containers::Product.new(body["Product"])
-              @quote = TTK::ETrade::Market::Containers::Response.null_quote(product: body["Product"])
+
+              # Need to put quote inside a Platform Wrapper so it can be easily updated
+              @quote = quotes.subscribe(symbol: @product.osi, type: @product.security_type)
               @placed_time = placed_time || TTK::Containers::Leg::EPOCH
               @execution_time = execution_time || TTK::Containers::Leg::EPOCH
               @preview_time = preview_time || TTK::Containers::Leg::EPOCH

@@ -3,7 +3,7 @@
 require_relative "../../../../../../../ttk-containers/lib/ttk/containers/rspec/shared_leg_spec"
 
 RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
-  subject(:container) { described_class.new(body: body) }
+  subject(:container) { described_class.new(body: body, quotes: quotes) }
 
   let(:execution_time) { Time.now.to_i }
   let(:price) { 1.23 }
@@ -33,10 +33,18 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
          "strikePrice" => etrade_product["strikePrice"]}
     }
   end
+  let(:quotes) { double("quotes") }
+  let(:quote) { make_default_equity_option_quote(product: quote_product) }
+  let(:quote_product) { make_default_equity_option_product(callput: callput) }
+
+  before do
+    allow(quotes).to receive(:subscribe).and_return(quote)
+  end
 
   context "equity" do
     let(:etrade_product) { make_etrade_equity_product }
     let(:etrade_quote) { make_etrade_equity_quote(product: etrade_product) }
+    let(:callput) { :call }
 
     describe "creation" do
       it "returns a portfolio response instance" do
@@ -50,6 +58,7 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
   context "option" do
     let(:etrade_product) { make_etrade_option_product }
     let(:etrade_quote) { make_etrade_option_quote(product: etrade_product) }
+    let(:callput) { :call }
 
     describe "creation" do
       it "returns a portfolio response instance" do
@@ -68,12 +77,12 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
       let(:execution_time) { Time.new(now.year, now.month, now.day, 0, 0, 0, TTK::Eastern_TZ).to_i * 1000 }
       let(:preview_time) { TTK::Containers::Leg::EPOCH }
       let(:direction) { :opening }
-      let(:quote) { container.quote }
 
       context "where it is short call then" do
         let(:etrade_product) { make_etrade_option_product(callput: "CALL") }
         let(:side) { "SHORT" }
         let(:filled_quantity) { -2 }
+        let(:callput) { :call }
 
         include_examples "leg interface - short position"
         include_examples "leg interface - short call greeks"
@@ -83,6 +92,7 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
         let(:etrade_product) { make_etrade_option_product(callput: "PUT") }
         let(:side) { "SHORT" }
         let(:filled_quantity) { -2 }
+        let(:callput) { :put }
 
         include_examples "leg interface - short position"
         include_examples "leg interface - short put greeks"
@@ -92,6 +102,7 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
         let(:etrade_product) { make_etrade_option_product(callput: "CALL") }
         let(:side) { "LONG" }
         let(:filled_quantity) { 1 }
+        let(:callput) { :call }
 
         include_examples "leg interface - long position"
         include_examples "leg interface - long call greeks"
@@ -101,6 +112,7 @@ RSpec.describe TTK::ETrade::Portfolio::Containers::Response::Position do
         let(:etrade_product) { make_etrade_option_product(callput: "PUT") }
         let(:side) { "LONG" }
         let(:filled_quantity) { 1 }
+        let(:callput) { :put }
 
         include_examples "leg interface - long position"
         include_examples "leg interface - long put greeks"

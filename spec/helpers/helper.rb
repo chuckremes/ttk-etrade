@@ -1,4 +1,9 @@
 # frozen_string_literal: true
+#
+# Reopens the Helper module from ttk-containers and adds more convenience
+# methods for supporting testing.
+#
+require_relative "../../../ttk-containers/lib/ttk/containers/rspec"
 
 module Helper
   # Returns a struct in the form of an ETrade Product payload

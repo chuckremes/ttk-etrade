@@ -53,10 +53,19 @@ module TTK
             end_date: end_date,
             status: status)
 
-          array.map! { |order_response| TTK::ETrade::Orders::Containers::Response::Existing.new(body: order_response) }
-          array = filter(array)#.map do |element|
-            # TTK::ETrade::Orders::Containers::Existing.new(interface: self, body: element, account_key: @account.key)
-          # end
+          array.map! do |order_response|
+            TTK::ETrade::Orders::Containers::Response::Existing.new(body: order_response, quotes: @quotes)
+          end
+          array = filter(array).map do |element|
+            # wrap in editable container if order is open
+            if element.open?
+              TTK::Platform::Order::Write.from_existing_order(vendor: self, response: element)
+            else
+              element
+            end
+          end.map do |element|
+            TTK::Platform::Wrappers::Combo::Base.choose_wrapper(element)
+          end
           array
         end
 
@@ -87,7 +96,7 @@ module TTK
 
         def submit_preview(payload)
           result = @preview.submit(payload: payload, account_key: @account.key)
-          TTK::ETrade::Orders::Containers::Response::Preview.new(body: result)
+          TTK::ETrade::Orders::Containers::Response::Preview.new(body: result, quotes: @quotes)
         end
 
         def submit_vertical(attributes:, preview:)
@@ -97,17 +106,17 @@ module TTK
 
         def submit_change_preview(payload, order_id:)
           result = @preview_change.submit(payload: payload, account_key: @account.key, order_id: order_id)
-          TTK::ETrade::Orders::Containers::Response::Preview.new(body: result)
+          TTK::ETrade::Orders::Containers::Response::Preview.new(body: result, quotes: @quotes)
         end
 
         def submit_order(payload)
           result = @place.submit(payload: payload, account_key: @account.key)
-          TTK::ETrade::Orders::Containers::Response::Placed.new(body: result)
+          TTK::ETrade::Orders::Containers::Response::Placed.new(body: result, quotes: @quotes)
         end
 
         def submit_order_change(payload, order_id:)
           result = @place_change.submit(payload: payload, account_key: @account.key, order_id: order_id)
-          TTK::ETrade::Orders::Containers::Response::Placed.new(body: result)
+          TTK::ETrade::Orders::Containers::Response::Placed.new(body: result, quotes: @quotes)
         end
 
         def cancel(order:, reason:)
@@ -128,7 +137,7 @@ module TTK
           order = nil
           elapsed("ELAPSED load_order #{order_id}") do
             body  = @load.reload(order_id: order_id, account_key: account_key)
-            order = TTK::ETrade::Orders::Containers::Response::Existing.new(body: body)
+            order = TTK::ETrade::Orders::Containers::Response::Existing.new(body: body, quotes: @quotes)
           end
           order
         end

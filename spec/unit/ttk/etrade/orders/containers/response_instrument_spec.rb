@@ -8,7 +8,7 @@ RSpec.describe TTK::ETrade::Orders::Containers::Response::Instrument do
   subject(:container) {
     described_class.new(body: body, placed_time: placed_time,
       execution_time: execution_time, preview_time: preview_time,
-      leg_status: convert_status(leg_status))
+      leg_status: convert_status(leg_status), quotes: quotes)
   }
 
   let(:body) do
@@ -24,6 +24,12 @@ RSpec.describe TTK::ETrade::Orders::Containers::Response::Instrument do
   let(:leg_status) { "OPEN" }
   let(:side) { :long }
   let(:direction) { :opening }
+  let(:quotes) { double("quotes") }
+  let(:quote) { make_default_equity_option_quote }
+
+  before do
+    allow(quotes).to receive(:subscribe).and_return(quote)
+  end
 
   describe "creation" do
     it "returns a response instrument instance" do

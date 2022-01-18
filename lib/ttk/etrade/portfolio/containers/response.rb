@@ -18,10 +18,11 @@ module TTK
 
             attr_reader :body, :product, :quote
 
-            def initialize(body:)
+            def initialize(body:, quotes:)
               @body = body
               @product = TTK::ETrade::Containers::Product.new(body["Product"])
-              @quote = TTK::ETrade::Market::Containers::Response.null_quote(product: body["Product"])
+              # Need to put quote inside a Platform Wrapper so it can be easily updated
+              @quote = quotes.subscribe(symbol: @product.osi, type: @product.security_type)
             end
 
             def side
