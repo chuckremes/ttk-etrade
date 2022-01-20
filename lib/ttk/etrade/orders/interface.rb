@@ -90,7 +90,12 @@ module TTK
         #
         def preview_vertical(attributes:)
           payload = Generator.preview_vertical(attributes: attributes)
-          response = submit_preview(payload)
+
+          response = if attributes.order_id
+            submit_change_preview(payload, order_id: attributes.order_id)
+          else
+            submit_preview(payload)
+          end
           [response, payload]
         end
 
@@ -101,7 +106,11 @@ module TTK
 
         def submit_vertical(attributes:, preview:)
           payload = Orders::Generator.place_vertical(attributes: attributes, preview: preview)
-          submit_order(payload)
+          if attributes.order_id
+            submit_order_change(payload, order_id: attributes.order_id)
+          else
+            submit_order(payload)
+          end
         end
 
         def submit_change_preview(payload, order_id:)
