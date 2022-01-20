@@ -50,7 +50,7 @@ module TTK
           @@sequence += 1
           # allowed to be a MAX of 20 chars
           # example: "1120-10:16:55.199" (note no 4-digit year)
-          Time.now.strftime("%Y%m%d-%H-") + @@sequence.to_s.rjust(7, "0")
+          Time.now.strftime("%Y%m%d-%H%M-") + @@sequence.to_s.rjust(5, "0")
         end
 
         def self.to_order_type(type)
