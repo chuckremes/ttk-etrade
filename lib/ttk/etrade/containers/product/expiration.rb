@@ -56,5 +56,9 @@ class TTK::ETrade::Containers::Product
     def <=>(other)
       date <=> other.date
     end
+
+    def to_s
+      iso8601
+    end
   end
 end
