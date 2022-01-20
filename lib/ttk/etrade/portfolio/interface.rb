@@ -38,7 +38,7 @@ class TTK::ETrade::Portfolio::Interface
   def list(status = nil)
     array = @list.reload(account_key: @account.key)
 
-    array.map! { |element| TTK::ETrade::Portfolio::Containers::Response::Position.new(body: element) }
+    array.map! { |element| TTK::ETrade::Portfolio::Containers::Response::Position.new(body: element, quotes: @quotes) }
     process_list(array)
     @list_cache
   end
