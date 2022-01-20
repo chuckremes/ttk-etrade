@@ -305,8 +305,27 @@ module TTK
               end
             end
 
+            def action
+              case body["orderAction"]
+              when "SELL_OPEN"
+                :sell_to_open
+              when "SELL_CLOSE"
+                :sell_to_close
+              when "SELL"
+                :sell
+              when "BUY_OPEN"
+                :buy_to_open
+              when "BUY_CLOSE"
+                :buy_to_close
+              when "BUY"
+                :buy
+              end
+            end
+
             def unfilled_quantity
-              body["orderedQuantity"].to_i
+              # Preview Response and Place Response can use either field name
+              # Not sure what conditions results in each one, shrug
+              (body.dig("orderedQuantity") || body.dig("quantity")).to_i
             end
 
             def filled_quantity
