@@ -24,7 +24,21 @@ ETrade REST API v1 (circa 2018) has the following rate limits per their support 
 * Orders Module = 17,800 / hour or 4.9 / second
 * Users Module = 35,600 / hour or 9.8 / second
 
-They note that Options Chains use the Markets module so downloading lots of chains repeatedly can rapidly consume the quota. Each OptionPair associated with a strike in an option chain is considered as 2 quote requests. So downloading a chain with 50 strikes for CallPut will consume 100 quote requests for that hour. Downloading many chains repeatedly can rapidly consume the whole 140k hourly limit.
+They note that Options Chains use the Markets module so 
+downloading lots of chains repeatedly can rapidly consume
+the quota. Each OptionPair associated with a strike in an
+option chain is considered as 2 quote requests. So
+downloading a chain with 50 strikes for CallPut will 
+consume 100 quote requests for that hour. Downloading
+many chains repeatedly can rapidly consume the whole 
+140k hourly limit. On 2022/01/15 I confirmed with ETrade
+API support that the Markets Module limit is 140k
+quotes per hour. It has nothing to do with request count
+since when a single request contains _N_ symbols then it
+consumes _N_ quotes from the 140k limit. They did not
+clarify if this is true for other Modules, e.g. if
+a large Portfolio with 100 positions counts as 100
+messages consumed from the Accounts Module.
 
 It is best to download the chains once and cache them. 
 In this system, the `OptionPair` is converted to an
@@ -39,8 +53,26 @@ updates them in-place.
 2. Make it right
 3. Make it fast
 
-Still in phase #1 where I'm making it work. When I get to "make it right" then there will be additional refactors and lots of unit and integration tests. This code needs to be trustworhty. While it currently works, it needs tests to make sure it continues to work.
+Now in Phase 2 to Make It Right. Many refactors have
+occurred and many more will occur. Lots of tests have
+been written and run regularly to minimize regressions.
+These have mostly been unit or small integration tests.
 
+Work on larger integration tests that exercise a complex
+piece of the system like Order management need to be
+written before the system can be trusted with money
+again. 
+
+### Required Integration Tests
+* Downloading a Position immediately returns the correct
+and up-to-date Greeks
+* Create an order, submit it, and change it successfully
+* When computing an exit price, revisit the entire roll
+history of the position to accumulate all credits/debits
+and calc the right exit price
+* With some open positions and some open unexecuted orders,
+confirm that the strategy enforces appropriate
+position limits and restricts opening further orders
 # Notes
 
 The long term plan is to provide access to multiple
